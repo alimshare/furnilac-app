@@ -114,6 +114,7 @@ class ItemController extends Controller
 		$obj->part_number 	= $req->input('part_number');
 		$obj->part_name 	= $req->input('part_name');
 		$obj->price	 		= $req->input('price');
+		$obj->qty	 		= $req->input('qty');
 
 		if ($obj->save()) {
 			return redirect($this->BASE_PATH.'/'.$obj->item_code)->with('alert', ['message'=>'save part success !', 'type'=>'success']);
@@ -146,6 +147,7 @@ class ItemController extends Controller
 
 		$obj->part_name 	= $req->input('part_name');
 		$obj->price	 		= $req->input('price');
+		$obj->qty	 		= $req->input('qty');
 
 		if ($obj->save()) {
 			return redirect($this->BASE_PATH.'/'.$obj->item_code)->with('alert', ['message'=>'edit part success !', 'type'=>'success']);

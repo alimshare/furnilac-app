@@ -34,6 +34,10 @@
                                 <div class="col-sm-8"><input type="text" class="form-control" id="part_name" placeholder="Name" name="part_name" required="" value="{{ $object->part_name }}"></div>
                             </div>
                             <div class="form-group">
+                                <label for="qty" class="col-sm-4 control-label">Qty</label>
+                                <div class="col-sm-8"><input type="number" class="form-control" id="qty" placeholder="Qty" name="qty" required="" value="{{ $object->qty }}"></div>
+                            </div>
+                            <div class="form-group">
                                 <label for="nik" class="col-sm-4 control-label">Price</label>
                                 <div class="col-sm-8"><input type="text" class="form-control" id="price" placeholder="Price" name="price" required="" value="{{ $object->price }}"></div>
                             </div>

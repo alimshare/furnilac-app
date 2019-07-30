@@ -59,6 +59,7 @@
                                         <th>Code</th>
                                         <th>Part Number</th>
                                         <th>Part Name</th>
+                                        <th>Qty</th>
                                         <th>Price</th>
                                         <th>Action</th>
                                     </tr>
@@ -69,6 +70,7 @@
                                             <td>{{ $o->item_code }}</td>
                                             <td>{{ $o->part_number }}</td>
                                             <td>{{ $o->part_name }}</td>
+                                            <td>{{ $o->qty }}</td>
                                             <td class="text-right">{{ number_format($o->price,0,',','. ') }}</td>
                                             <td class="text-left">
                                                 <a href="/item/{{ $o->item_code }}/edit/{{ $o->part_number }}" class="btn btn-primary">Edit</a>

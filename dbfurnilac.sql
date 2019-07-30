@@ -1,20 +1,3 @@
--- --------------------------------------------------------
--- Host:                         127.0.0.1
--- Server version:               8.0.13 - MySQL Community Server - GPL
--- Server OS:                    Win64
--- HeidiSQL Version:             9.1.0.4867
--- --------------------------------------------------------
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET NAMES utf8mb4 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-
--- Dumping database structure for dbfurnilac
-CREATE DATABASE IF NOT EXISTS `dbfurnilac` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */;
-USE `dbfurnilac`;
-
-
 -- Dumping structure for table dbfurnilac.buyer
 CREATE TABLE IF NOT EXISTS `buyer` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -23,11 +6,11 @@ CREATE TABLE IF NOT EXISTS `buyer` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 -- Dumping data for table dbfurnilac.buyer: ~2 rows (approximately)
 /*!40000 ALTER TABLE `buyer` DISABLE KEYS */;
-INSERT INTO `buyer` (`id`, `name`, `created_at`, `updated_at`, `deleted_at`) VALUES
+REPLACE INTO `buyer` (`id`, `name`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	(1, 'PT. Fabelio, Ltd', '2019-07-23 00:26:59', '2019-07-22 19:08:48', NULL),
 	(2, 'PT. Fabelio', '2019-07-23 00:26:59', '2019-07-22 19:06:24', '2019-07-22 19:06:24'),
 	(3, 'PT. Ace Hardware, Tbk', '2019-07-22 19:07:19', '2019-07-22 19:08:59', '2019-07-22 19:08:59');
@@ -43,11 +26,11 @@ CREATE TABLE IF NOT EXISTS `employee` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=863 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 -- Dumping data for table dbfurnilac.employee: ~860 rows (approximately)
 /*!40000 ALTER TABLE `employee` DISABLE KEYS */;
-INSERT INTO `employee` (`id`, `nik`, `name`, `created_at`, `updated_at`, `deleted_at`) VALUES
+REPLACE INTO `employee` (`id`, `nik`, `name`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	(1, '23444', 'AHMAD YANI', '2019-07-22 21:55:35', NULL, NULL),
 	(2, '23467', 'KAMARUDIN', '2019-07-22 21:55:36', NULL, NULL),
 	(3, '23468', 'SA\'IN SAPUTRA', '2019-07-22 21:55:36', NULL, NULL),
@@ -921,11 +904,11 @@ CREATE TABLE IF NOT EXISTS `item` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`item_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 -- Dumping data for table dbfurnilac.item: ~75 rows (approximately)
 /*!40000 ALTER TABLE `item` DISABLE KEYS */;
-INSERT INTO `item` (`item_code`, `item_name`, `created_at`, `updated_at`, `deleted_at`) VALUES
+REPLACE INTO `item` (`item_code`, `item_name`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('AAF', NULL, '2019-07-22 22:48:28', NULL, NULL),
 	('AGI', NULL, '2019-07-22 22:48:28', NULL, NULL),
 	('AGJ', NULL, '2019-07-22 22:48:28', NULL, NULL),
@@ -1008,14 +991,14 @@ INSERT INTO `item` (`item_code`, `item_name`, `created_at`, `updated_at`, `delet
 -- Dumping structure for table dbfurnilac.migrations
 CREATE TABLE IF NOT EXISTS `migrations` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `migration` varchar(255)  NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
 -- Dumping data for table dbfurnilac.migrations: ~2 rows (approximately)
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
+REPLACE INTO `migrations` (`id`, `migration`, `batch`) VALUES
 	(1, '2014_10_12_000000_create_users_table', 1),
 	(2, '2014_10_12_100000_create_password_resets_table', 1);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
@@ -1031,11 +1014,11 @@ CREATE TABLE IF NOT EXISTS `part` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`part_number`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 -- Dumping data for table dbfurnilac.part: ~463 rows (approximately)
 /*!40000 ALTER TABLE `part` DISABLE KEYS */;
-INSERT INTO `part` (`item_code`, `part_number`, `part_name`, `price`, `created_at`, `updated_at`, `deleted_at`) VALUES
+REPLACE INTO `part` (`item_code`, `part_number`, `part_name`, `price`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('AAF', 'AAF 3005', 'Box 3', 15530, '2019-07-22 23:17:09', NULL, NULL),
 	('AAF', 'AAF 3014', 'Laci 4', 2080, '2019-07-22 23:17:09', NULL, NULL),
 	('AAF', 'AAF 3103', 'Box 4', 1300, '2019-07-22 23:17:09', NULL, NULL),
@@ -1523,11 +1506,11 @@ INSERT INTO `part` (`item_code`, `part_number`, `part_name`, `price`, `created_a
 
 -- Dumping structure for table dbfurnilac.password_resets
 CREATE TABLE IF NOT EXISTS `password_resets` (
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255)  NOT NULL,
+  `token` varchar(255)  NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   KEY `password_resets_email_index` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
 -- Dumping data for table dbfurnilac.password_resets: ~0 rows (approximately)
 /*!40000 ALTER TABLE `password_resets` DISABLE KEYS */;
@@ -1543,7 +1526,7 @@ CREATE TABLE IF NOT EXISTS `po` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`po_number`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 -- Dumping data for table dbfurnilac.po: ~0 rows (approximately)
 /*!40000 ALTER TABLE `po` DISABLE KEYS */;
@@ -1561,32 +1544,26 @@ CREATE TABLE IF NOT EXISTS `po_detail` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Dumping data for table dbfurnilac.po_detail: ~0 rows (approximately)
-/*!40000 ALTER TABLE `po_detail` DISABLE KEYS */;
-/*!40000 ALTER TABLE `po_detail` ENABLE KEYS */;
+);
 
 
 -- Dumping structure for table dbfurnilac.users
 CREATE TABLE IF NOT EXISTS `users` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255)  NOT NULL,
+  `email` varchar(255)  NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password` varchar(255)  NOT NULL,
+  `remember_token` varchar(100)  DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
 -- Dumping data for table dbfurnilac.users: ~0 rows (approximately)
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
+REPLACE INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
 	(1, 'Administrator', 'admin@app.com', NULL, '$2y$10$cXOaiRSP.DCgGcXWNTAQ.umcVZSlD0Lkfc.1.r2fA8eMrX1w.oUqy', NULL, '2019-07-22 10:56:43', '2019-07-22 10:56:43');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
-/*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
