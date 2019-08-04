@@ -16,6 +16,7 @@ Route::get('/', 'HomeController@index');
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/change-password', 'HomeController@changePassword')->name('change-password');
 
 Route::get('/employee', 'EmployeeController@list');
 Route::get('/employee/new', 'EmployeeController@new');
