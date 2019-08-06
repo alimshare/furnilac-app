@@ -44,6 +44,7 @@
         <li><a href="/po"><i class="fas fa-clipboard-list"></i>&nbsp;&nbsp;<span> Purchase Order</span></a></li>
         
         <li class="header">Other</li>
+        <li><a href="/user"><i class="fa fa-users"></i> User Application</a></li>
         <li><a href="/change-password"><i class="fa fa-key"></i> <span> Change Password</span></a></li>
         <li>
           <a href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">

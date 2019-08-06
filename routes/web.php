@@ -55,3 +55,10 @@ Route::post('/po/new', 'POController@save');
 Route::get('/po/edit', 'POController@edit');
 Route::post('/po/edit', 'POController@update');
 Route::get('/po/export', 'POController@export');
+
+Route::get('/user', 'UserController@list');
+Route::get('/user/new', 'UserController@new');
+Route::post('/user/new', 'UserController@save');
+Route::get('/user/edit/{id?}', 'UserController@edit');
+Route::post('/user/edit', 'UserController@update');
+Route::post('/user/delete', 'UserController@delete');
