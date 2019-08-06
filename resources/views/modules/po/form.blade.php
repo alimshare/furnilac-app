@@ -76,7 +76,7 @@
                                                             </select>
                                                         </td>
                                                         <td>
-                                                            <input type="number" min="1" name="qty[]" class="form-control">
+                                                            <input type="number" min="1" name="qty[]" class="form-control" value="1">
                                                         </td>
                                                         <td class="text-center">
                                                             <a href="javascript:void(0)" class="del-item"><i class="fa fa-times text-red"></i></a>
