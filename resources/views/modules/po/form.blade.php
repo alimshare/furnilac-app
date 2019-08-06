@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('header-script')
+<link rel="stylesheet" href="/bower_components/select2/dist/css/select2.min.css">
+@endsection
+
 @section('content')
 
     <section class="content-header">
@@ -52,8 +56,8 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-xs-12">
-                                            <table class="table table-bordered">
+                                        <div class="col-xs-12 col-md-6">
+                                            <table class="table table-bordered" id="tbl_item">
                                                 <caption><h4>Order Detail</h4></caption>
                                                 <thead class="bg-gray">
                                                     <tr>
@@ -64,17 +68,25 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td>a</td>
-                                                        <td>a</td>
+                                                        <td>
+                                                            <select class="form-control select-item" name="item_code[]" style="width: 100%;">
+                                                                @foreach ($item as $el)
+                                                                    <option>{{ $el->item_code }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" min="1" name="qty[]" class="form-control">
+                                                        </td>
                                                         <td class="text-center">
-                                                            <a href="#"><i class="fa fa-times text-red"></i></a>
+                                                            <a href="javascript:void(0)" class="del-item"><i class="fa fa-times text-red"></i></a>
                                                         </td>
                                                     </tr>
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
                                                         <td colspan="3" class="text-center" style="padding-top: 2rem">
-                                                            <button type="button" class="btn btn-sm btn-block btn-success"><i class="fa fa-plus"></i> Add New Item to Order</button>
+                                                            <button type="button" class="btn btn-sm btn-block btn-success" id="btn_add_item"><i class="fa fa-plus"></i> Add New Item to Order</button>
                                                         </td>
                                                     </tr>
                                                 </tfoot>
@@ -94,4 +106,32 @@
         </div>
     </section>
 
+@endsection
+
+@section('footer-script')
+<script src="/bower_components/select2/dist/js/select2.full.min.js"></script>
+<script type="text/javascript">
+    $(function(){
+        var clone_item = $('#tbl_item tbody tr:first').clone();
+        $('.select-item').select2();
+
+        $('#btn_add_item').on('click', function(e){
+            e.preventDefault();
+
+            var new_item = clone_item.clone();
+                new_item.appendTo('#tbl_item tbody');
+                new_item.find('.select-item').select2();
+        });
+
+        $('#tbl_item').on('click', '.del-item', function(e){
+            e.preventDefault();
+
+            if( $('#tbl_item tbody tr').length > 1 ) {
+                $(this).parents('tr').remove();
+            } else {
+                return false;
+            }
+        });
+    })
+</script>
 @endsection

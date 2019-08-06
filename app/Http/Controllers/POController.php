@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Model\PO as Obj;
+use App\Model\Item;
 
 class POController extends Controller
 {
     protected $BASE_PATH = '/po';
 	protected $VIEW_PATH = 'modules.po.';
+	public $data = array();
 
     /**
      * Create a new controller instance.
@@ -28,7 +30,12 @@ class POController extends Controller
     
 	public function new()
 	{
-		return view($this->VIEW_PATH.'form');
+		$this->data['item'] = Item::all();
+		return view($this->VIEW_PATH.'form', $this->data);
 	}
 
+	public function save(Request $request)
+	{
+		dd($request->all());
+	}
 }
