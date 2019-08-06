@@ -17,12 +17,12 @@
 
     <section class="content container-fluid">      
         <div class="row">
-            <div class="col-xs-12">
+            <div class="col-xs-12 col-lg-6">
                 <form class="form-horizontal" action="/po/new" method="POST">
                     <div class="box">
                         <div class="box-body">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="box box-solid box-primary">
                                         <div class="box-header"><h3 class="box-title">Order Information</h3></div>
                                         <div class="box-body">
@@ -56,7 +56,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-xs-12 col-md-6">
+                                        <div class="col-xs-12">
                                             <table class="table table-bordered" id="tbl_item">
                                                 <caption><h4>Order Detail</h4></caption>
                                                 <thead class="bg-gray">
