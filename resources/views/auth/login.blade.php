@@ -29,16 +29,24 @@
         </div>
         <div class="login-box-body">
             <p class="login-box-msg">Sign in to start your session</p>
-            <p class="text-danger text-center" id="message"></p>
+            <!-- <p class="text-danger text-center" id="message"></p> -->
+            @if(session()->has('login_error'))
+                <div class="alert alert-warning alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ session('login_error') }}
+                </div>
+            @endif
             <form action="/login" method="post">
                 @csrf
                 <div class="form-group has-feedback">
                     <input type="email" class="form-control" placeholder="Email" name="email" id="email" value="admin@app.com">
                     <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    @if ($errors->has('email')) <small class="text-red">{{ $errors->first('email') }}</small> @endif
                 </div>
                 <div class="form-group has-feedback">
                     <input type="password" class="form-control" placeholder="Password" name="password" id="password" value="password">
                     <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                    @if ($errors->has('password')) <small class="text-red">{{ $errors->first('password') }}</small> @endif
                 </div>
                 <div class="row">
                     <div class="col-xs-8"></div>
@@ -51,6 +59,8 @@
         </div>
     </div>
 
+    <!-- jQuery 3 -->
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
 
