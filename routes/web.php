@@ -62,3 +62,4 @@ Route::post('/user/new', 'UserController@save');
 Route::get('/user/edit/{id?}', 'UserController@edit');
 Route::post('/user/edit', 'UserController@update');
 Route::post('/user/delete', 'UserController@delete');
+Route::post('/user/change-password', 'UserController@changePassword');
