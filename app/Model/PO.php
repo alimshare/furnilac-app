@@ -23,4 +23,15 @@ class PO extends Model
      * @var string
      */
     protected $keyType = 'char';
+
+    /**
+    *   Return Employee choosen as a PIC for current PO
+    */
+    public function pic() {
+        return $this->belongsTo('\App\Model\Employee', 'pic_id', 'id')->withDefault([
+            'nik' => '',
+            'name' => ''
+        ]);
+    }
+
 }

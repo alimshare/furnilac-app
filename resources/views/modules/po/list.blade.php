@@ -53,7 +53,9 @@
                             <table class="table table-bordered dt">
                                 <thead>
                                     <tr>                        
-                                        <th>Nomor PO</th>
+                                        <th>PO Number</th>
+                                        <th>Transaction Date</th>
+                                        <th>PIC</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -61,9 +63,13 @@
                                     @foreach($list as $o)
                                         <tr>
                                             <td>{{ $o->po_number }}</td>
+                                            <td>{{ $o->transaction_date }}</td>
+                                            <td>{{ $o->pic->nik . ' - ' .$o->pic->name }}</td>
                                             <td>
-                                                <a href="/po/edit/{{ $o->po_number }}" class="btn btn-primary">Edit</a>
-                                                <a href="#" class="btn btn-danger" onclick="confirmDelete({{ $o->po_number }})">Delete</a>
+                                                <a href="/po/edit/{{ $o->po_number }}" class="btn btn-primary btn-flat">Edit</a>
+                                                <a href="#" class="btn btn-danger btn-flat" onclick="confirmDelete({{ $o->po_number }})">Delete</a>
+                                                <a href="/po/view/{{ $o->po_number }}" class="btn btn-info btn-flat">View</a>
+                                                <a href="/po/production/{{ $o->po_number }}" class="btn btn-default btn-flat">Production</a>
                                             </td>
                                         </tr>
                                     @endforeach

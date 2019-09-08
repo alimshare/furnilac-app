@@ -2,6 +2,17 @@
 
 @section('header-script')
 <link rel="stylesheet" href="/bower_components/select2/dist/css/select2.min.css">
+<style type="text/css">
+.select2-container--default .select2-selection--single {
+    background-color: #fff;
+    border: 1px solid #d2d6de;
+     border-radius: 0px; 
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #444;
+    line-height: 23px;
+}
+</style>
 @endsection
 
 @section('content')
@@ -17,12 +28,12 @@
 
     <section class="content container-fluid">      
         <div class="row">
-            <div class="col-xs-12 col-lg-6">
+            <div class="col-xs-12 col-lg-12">
                 <form class="form-horizontal" action="/po/new" method="POST">
                     <div class="box">
                         <div class="box-body">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-12 col-lg-6">
                                     <div class="box box-solid box-primary">
                                         <div class="box-header"><h3 class="box-title">Order Information</h3></div>
                                         <div class="box-body">
@@ -30,6 +41,16 @@
                                             <div class="form-group">
                                                 <label for="poNumber" class="col-sm-4 control-label">PO Number <span class="text-red">*</span></label>
                                                 <div class="col-sm-8"><input type="text" class="form-control" id="poNumber" placeholder="PO Number" name="poNumber" required=""></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="pic" class="col-sm-4 control-label">PIC <span class="text-red">*</span></label>
+                                                <div class="col-sm-8">
+                                                    <select id="po" name="po" class="form-control select-item" style="width: 100%">
+                                                        @foreach($employees as $e)
+                                                            <option value="{{ $e->id }}">{{ $e->nik . ' - ' . $e->name }}</option>
+                                                        @endforeach    
+                                                    </select>
+                                                </div>
                                             </div>
                                             <div class="form-group">
                                                 <label for="transactionDate" class="col-sm-4 control-label">Transaction Date <span class="text-red">*</span></label>
@@ -62,21 +83,33 @@
                                                 <thead class="bg-gray">
                                                     <tr>
                                                         <th>Item Code</th>
+                                                        <th>Part Qty</th>
                                                         <th>Qty</th>
+                                                        <th>SW Begin</th>
+                                                        <th>SW End</th>
                                                         <th></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr>
                                                         <td>
-                                                            <select class="form-control select-item" name="item_code[]" style="width: 100%;">
+                                                            <select class="select-item form-control" name="item_code[]" style="width: 100%;">
                                                                 @foreach ($item as $el)
-                                                                    <option>{{ $el->item_code }}</option>
+                                                                    <option value="{{ $el->id }}" data-qty="{{ $el->qty }}">{{ $el->item_code }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </td>
                                                         <td>
+                                                            <label class="form-control" id="part_qty"></label>
+                                                        </td>
+                                                        <td>
                                                             <input type="number" min="1" name="qty[]" class="form-control" value="1">
+                                                        </td>
+                                                        <td>
+                                                            <input type="date" name="sw_begin[]" class="form-control">
+                                                        </td>
+                                                        <td>
+                                                            <input type="date" name="sw_end[]" class="form-control">
                                                         </td>
                                                         <td class="text-center">
                                                             <a href="javascript:void(0)" class="del-item"><i class="fa fa-times text-red"></i></a>
@@ -85,7 +118,7 @@
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
-                                                        <td colspan="3" class="text-center" style="padding-top: 2rem">
+                                                        <td colspan="5" class="text-center" style="padding-top: 2rem">
                                                             <button type="button" class="btn btn-sm btn-block btn-success" id="btn_add_item"><i class="fa fa-plus"></i> Add New Item to Order</button>
                                                         </td>
                                                     </tr>

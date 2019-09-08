@@ -56,6 +56,11 @@ Route::get('/po/edit', 'POController@edit');
 Route::post('/po/edit', 'POController@update');
 Route::get('/po/export', 'POController@export');
 
+Route::get('/po/production', 'POController@productionSearch');
+Route::get('/po/production/{po_number}', 'POController@productionList');
+Route::get('/po/production/{po_number}/report', 'POController@reportProductionProgress');
+Route::post('/po/production/{po_number}/report', 'POController@saveProductionProgress');
+
 Route::get('/user', 'UserController@list');
 Route::get('/user/new', 'UserController@new');
 Route::post('/user/new', 'UserController@save');

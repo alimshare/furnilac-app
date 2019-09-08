@@ -42,9 +42,14 @@
           </ul>
         </li>
         <li><a href="/po"><i class="fas fa-clipboard-list"></i>&nbsp;&nbsp;<span> Purchase Order</span></a></li>
+        <li><a href="/po/production"><i class="fas fa-check"></i>&nbsp;&nbsp;<span> Production Report</span></a></li>
+        <!-- 
+        <li class="header">Report</li>
+        <li><a href="/po/cetak"><i class="fas fa-file-export"></i> &nbsp;&nbsp;<span> Export PO</span></a></a></li> -->
+
         
         <li class="header">Other</li>
-        <li><a href="/user"><i class="fa fa-users"></i> User Application</a></li>
+        <li><a href="/user"><i class="fa fa-users"></i> <span>User Application</span></a></li>
         <li><a href="/change-password"><i class="fa fa-key"></i> <span> Change Password</span></a></li>
         <li>
           <a href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Model\PO as Obj;
 use App\Model\Item;
+use App\Model\Employee;
 
 class POController extends Controller
 {
@@ -31,11 +32,17 @@ class POController extends Controller
 	public function new()
 	{
 		$this->data['item'] = Item::all();
+		$this->data['employees'] = Employee::all();
 		return view($this->VIEW_PATH.'form', $this->data);
 	}
 
 	public function save(Request $request)
 	{
 		dd($request->all());
+	}
+
+	public function productionSearch()
+	{
+		return view($this->VIEW_PATH.'production-search');
 	}
 }
