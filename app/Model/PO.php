@@ -34,4 +34,36 @@ class PO extends Model
         ]);
     }
 
+    /**
+    *   Return Buyer
+    */
+    public function buyer() {
+        return $this->belongsTo('\App\Model\Buyer', 'buyer_id', 'id')->withDefault([
+            'id' => '',
+            'name' => ''
+        ]);
+    }
+
+
+    /**
+    *   Return Detail PO
+    */
+    public function detail() {
+        return $this->hasMany('\App\Model\PODetail', 'po_number', 'po_number');
+    }
+
+    /**
+    *   Return Production Report Progress
+    */
+    public function productionReport() {
+        return $this->hasMany('\App\Model\ProductionReport', 'po_number', 'po_number');
+    }
+
+    /**
+    *   Return Mandays Report
+    */
+    public function mandaysReport() {
+        return $this->hasManyThrough('\App\Model\MandaysReport', '\App\Model\ProductionReport', 'po_number', 'production_report_id', 'po_number', 'id');
+    }
+
 }

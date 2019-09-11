@@ -13,6 +13,24 @@
 @endsection
 
 @section('footer-script')
+ <script type="text/javascript">
+        
+    function searchPo(){
+        let poNumber = document.getElementById('po_number');
+        document.location = '/po/production/' + (poNumber.value);
+    }
+
+    function checkByEnter(elem) {
+         // Number 13 is the "Enter" key on the keyboard
+        if (event.keyCode === 13) {
+            // Cancel the default action, if needed
+            event.preventDefault();
+            // Trigger the button element with a click
+            document.getElementById("btnCari").click();
+        }
+    }
+
+ </script>
 @endsection
 
 @section('content')
@@ -32,49 +50,49 @@
                 <div class="box">
                     
                     <div class="box-header with-border">
-                        @include('components.alert')
-                        <!-- <div class="text-right" style="margin-bottom: 6px;">
-                            <a href="/po/new" class="btn btn-primary btn-flat"> <i class="fa fa-plus"></i> New Purchase Order</a>
-                        </div> -->
-                        <!-- <h3>search Purchase Order </h3> -->
+
                         <div class="row">
                             <div class="col-md-6">                                
                                 <div class="input-group">
                                     <span class="input-group-addon" for="po_number">Search Purchase Order</span>
-                                    <input type="text" name="po_number" placeholder="Input Your Purchase Order Number ..." class="form-control">
-                                    <span class="input-group-btn"><button type="submit" class="btn btn-success btn-flat">Search</button></span>
+                                    <input type="text" name="po_number" id="po_number" placeholder="Input Your Purchase Order Number ..." value="{{ $poNumber }}" class="form-control" onkeyup="checkByEnter(this)">
+                                    <span class="input-group-btn"><button type="submit" id="btnCari" class="btn btn-success btn-flat" onclick="searchPo()">Search</button></span>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    @if ($obj == null)
+                        @include('components.alert')
+                    @else
 
                     <div class="box-body">
 
                         <div class="nav-tabs-custom">
                             <ul class="nav nav-tabs">
                               <li class=""><a href="#summary" data-toggle="tab" aria-expanded="true">Summary</a></li>
-                              <li class="active"><a href="#progress" data-toggle="tab" aria-expanded="false">Production Report</a></li>
-                              <li class=""><a href="#mandays" data-toggle="tab" aria-expanded="false">Man Days Report</a></li>
+                              <li class=""><a href="#progress" data-toggle="tab" aria-expanded="false">Production Report</a></li>
+                              <li class="active"><a href="#mandays" data-toggle="tab" aria-expanded="false">Man Days Report</a></li>
                             </ul>
                             <div class="tab-content">
                               <div class="tab-pane" id="summary">                              
                                 <table class="table table-bordered" id="tbl-info-po">
                                     <tr>
                                         <td width="20%" class="lightgray">Purchase Order Number</td>
-                                        <td>PO-00001</td>
+                                        <td>{{ $obj->po_number }}</td>
                                     </tr>
                                     <tr>
                                         <td class="lightgray">Buyer</td>
-                                        <td>IKEA Alam Sutera</td>
+                                        <td>{{ $obj->buyer->name }}</td>
                                     </tr>  
                                     <tr>
                                         <td class="lightgray">Transaction Date</td>
-                                        <td>Jun 08, 2019</td>
+                                        <td>{{ date('M d, Y', strtotime($obj->transaction_date)) }}</td>
                                     </tr> 
-                                    <tr>
+                                    <!-- <tr>
                                         <td class="lightgray">Status</td>
                                         <td>PRODUCTION</td>
-                                    </tr>  
+                                    </tr>   -->
                                     <tr>
                                         <td class="lightgray">Order Detail</td>
                                         <td class="">
@@ -83,34 +101,20 @@
                                                     <tr>
                                                         <th class="">Part Item</th>
                                                         <th class="">Qty per Item</th>
-                                                        <th class="">Qty</th>
+                                                        <th class="">Qty Order</th>
                                                         <th class="">Production</th>
                                                     </tr>
                                                 </thead>
-                                                <tr>
-                                                    <td>AAF 3005</td>
-                                                    <td>3</td>
-                                                    <td>1000</td>
-                                                    <td>3000</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>AAF 3005</td>
-                                                    <td>3</td>
-                                                    <td>1000</td>
-                                                    <td>3000</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>AAF 3005</td>
-                                                    <td>3</td>
-                                                    <td>1000</td>
-                                                    <td>3000</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>AAF 3005</td>
-                                                    <td>3</td>
-                                                    <td>1000</td>
-                                                    <td>3000</td>
-                                                </tr>
+
+                                                @foreach($obj->detail as $detail)
+                                                    <tr>
+                                                        <td>{{ $detail->part_number }}</td>
+                                                        <td>{{ $detail->unit_qty }}</td>
+                                                        <td>{{ $detail->qty }}</td>
+                                                        <td>{{ $detail->unit_qty * $detail->qty }}</td>
+                                                    </tr>
+                                                @endforeach
+
                                             </table>                                            
                                         </td>
                                     </tr>                       
@@ -118,58 +122,43 @@
                               </div>
                               <!-- /.tab-pane -->
                               
-                              <div class="tab-pane active" id="progress">
+                              <div class="tab-pane" id="progress">
+                                <div class="row">
+                                    <div class="col-xs-12" style="margin-bottom: 10px">
+                                        <a href="/po/production/{{ $obj->po_number }}/report" class="btn btn-flat btn-default"><i class="fas fa-clipboard-list"></i> &nbsp;Update Progress Report</a>
+                                    </div>
+                                </div>
                                 <table class="table table-bordered table-striped">
                                     <thead>                                        
                                         <tr>
                                             <th>Production Date</th>
                                             <th>Reported By</th>
-                                            <th>Item</th>
                                             <th>Part</th>
                                             <th>Qty Output</th>
                                         </tr>
                                     </thead>
-                                    <tr>
-                                        <td>2019/09/08</td>
-                                        <td>Jojo Sumarno</td>
-                                        <td>AEF</td>
-                                        <td>AEF 1000</td>
-                                        <td>300</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2019/09/09</td>
-                                        <td>Jojo Sumarno</td>
-                                        <td>AEF</td>
-                                        <td>AEF 5000</td>
-                                        <td>450</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2019/09/10</td>
-                                        <td>Jojo Sumarno</td>
-                                        <td>AEF</td>
-                                        <td>AEF 4000</td>
-                                        <td>400</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2019/09/11</td>
-                                        <td>Jojo Sumarno</td>
-                                        <td>AEF</td>
-                                        <td>AEF 2000</td>
-                                        <td>100</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2019/09/12</td>
-                                        <td>Jojo Sumarno</td>
-                                        <td>AEF</td>
-                                        <td>AEF 3000</td>
-                                        <td>100</td>
-                                    </tr>
+
+                                    @foreach ($obj->productionReport as $report)
+                                        <tr>
+                                            <td>{{ $report->reported_date }}</td>
+                                            <td>{{ $report->reporter->name }}</td>
+                                            <td>{{ $report->part_number }}</td>
+                                            <td>{{ $report->qty_output }}</td>
+                                        </tr>
+                                    @endforeach
+
                                 </table>
                               </div>
                               <!-- /.tab-pane -->
                               
-                              <div class="tab-pane" id="mandays">
+                              <div class="tab-pane active" id="mandays">
                                 
+                                <div class="row">
+                                    <div class="col-xs-12" style="margin-bottom: 10px">
+                                        <a href="/po/production/{{ $obj->po_number }}/report" class="btn btn-flat btn-default"><i class="fas fa-clipboard-list"></i> &nbsp;Update Man Days Report</a>
+                                    </div>
+                                </div>
+
                                 <table class="table table-bordered table-striped">
                                     <thead>                                        
                                         <tr>
@@ -181,30 +170,18 @@
                                             <th>Man Hour</th>
                                         </tr>
                                     </thead>
-                                    <tr>
-                                        <td>2019/09/08</td>
-                                        <td>1</td>
-                                        <td>Azmi</td>
-                                        <td>198001</td>
-                                        <td>Jojo Sumarno</td>
-                                        <td>10</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2019/09/08</td>
-                                        <td>1</td>
-                                        <td>Azmi</td>
-                                        <td>198001</td>
-                                        <td>Jojo Sumarno</td>
-                                        <td>10</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2019/09/08</td>
-                                        <td>1</td>
-                                        <td>Azmi</td>
-                                        <td>198001</td>
-                                        <td>Jojo Sumarno</td>
-                                        <td>8</td>
-                                    </tr>
+
+                                    @foreach ($obj->mandaysReport as $report)
+                                        <tr>
+                                            <td>{{ $report->productionReport->reported_date }}</td>
+                                            <td>{{ $report->shift }}</td>
+                                            <td>{{ $report->reporter->name }}</td>
+                                            <td>{{ $report->employee->nik }}</td>
+                                            <td>{{ $report->employee->name }}</td>
+                                            <td>{{ $report->man_hour }}</td>
+                                        </tr>
+                                    @endforeach
+                                    
                                 </table>
 
                               </div>
@@ -213,7 +190,9 @@
                             <!-- /.tab-content -->
                           </div>
                     </div>
-                        
+                    
+                    @endif
+
                 </div>
                 
             </div>

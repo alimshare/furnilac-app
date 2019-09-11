@@ -11,8 +11,8 @@
     <script type="text/javascript">
         $('.dt').DataTable({
             "columnDefs": [
-                { "orderable": false,  "targets": 1 },
-                { "searchable": false,  "targets": 1 },
+                { "orderable": false,  "targets": 4 },
+                { "searchable": false,  "targets": 4 },
             ]
         });     
 
@@ -53,8 +53,9 @@
                             <table class="table table-bordered dt">
                                 <thead>
                                     <tr>                        
-                                        <th>PO Number</th>
                                         <th>Transaction Date</th>
+                                        <th>PO Number</th>
+                                        <th>Buyer</th>
                                         <th>PIC</th>
                                         <th>Action</th>
                                     </tr>
@@ -62,8 +63,9 @@
                                 <tbody>
                                     @foreach($list as $o)
                                         <tr>
-                                            <td>{{ $o->po_number }}</td>
                                             <td>{{ $o->transaction_date }}</td>
+                                            <td>{{ $o->po_number }}</td>
+                                            <td>{{ $o->buyer->name }}</td>
                                             <td>{{ $o->pic->nik . ' - ' .$o->pic->name }}</td>
                                             <td>
                                                 <a href="/po/edit/{{ $o->po_number }}" class="btn btn-primary btn-flat">Edit</a>

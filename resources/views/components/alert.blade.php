@@ -5,6 +5,13 @@
     </div>
 @endif
 
+@if(isset($alert))
+    <div class="alert alert-{{ (!in_array($alert->type, array('danger','info','success'))) ? 'info' : $alert->type }} alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        {!! $alert->message !!}
+    </div>
+@endif
+
 @if ($errors->any())
     <div class="alert alert-danger alert-dismissible">
     	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>

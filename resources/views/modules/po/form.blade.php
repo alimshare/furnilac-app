@@ -33,7 +33,7 @@
                     <div class="box">
                         <div class="box-body">
                             <div class="row">
-                                <div class="col-md-12 col-lg-6">
+                                <div class="col-md-12 col-lg-8">
                                     <div class="box box-solid box-primary">
                                         <div class="box-header"><h3 class="box-title">Order Information</h3></div>
                                         <div class="box-body">
@@ -43,35 +43,52 @@
                                                 <div class="col-sm-8"><input type="text" class="form-control" id="poNumber" placeholder="PO Number" name="poNumber" required=""></div>
                                             </div>
                                             <div class="form-group">
-                                                <label for="pic" class="col-sm-4 control-label">PIC <span class="text-red">*</span></label>
+                                                <label for="transactionDate" class="col-sm-4 control-label">Transaction Date <span class="text-red">*</span></label>
                                                 <div class="col-sm-8">
-                                                    <select id="po" name="po" class="form-control select-item" style="width: 100%">
-                                                        @foreach($employees as $e)
-                                                            <option value="{{ $e->id }}">{{ $e->nik . ' - ' . $e->name }}</option>
+                                                    <input type="date" class="form-control" id="transactionDate" placeholder="Transaction Date" name="transactionDate" required="">
+                                                    <small class="">Format : mm/dd/yyyy</small>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="pic" class="col-sm-4 control-label">Buyer <span class="text-red">*</span></label>
+                                                <div class="col-sm-8">
+                                                    <select id="buyerId" name="buyerId" class="form-control select-item" style="width: 100%">
+                                                        @foreach($buyers as $e)
+                                                            <option value="{{ $e->id }}">{{ $e->name }}</option>
                                                         @endforeach    
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label for="transactionDate" class="col-sm-4 control-label">Transaction Date <span class="text-red">*</span></label>
-                                                <div class="col-sm-8">
-                                                    <input type="text" class="form-control" id="transactionDate" placeholder="Transaction Date" name="transactionDate" required="">
-                                                    <small class="">Date Format : yyyy-mm-dd</small>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="startDateStuffing" class="col-sm-4 control-label">Stuffing Date <span class="text-red">*</span></label>
+                                                <label for="startDateStuffing" class="col-sm-4 control-label">SW Date <span class="text-red">*</span></label>
                                                 <div class="col-sm-8">
                                                     <div class="row">
                                                         <div class="col-xs-6">
-                                                            <input type="text" class="form-control" id="startDateStuffing" placeholder="Start Date" name="startDate">                                           
+                                                            <input type="date" class="form-control" id="startDate" placeholder="Start Date" name="startDate">                                           
                                                         </div>
                                                         <div class="col-xs-6">
-                                                            <input type="text" class="form-control" id="endDateStuffing" placeholder="End Date" name="endDate">                                        
+                                                            <input type="date" class="form-control" id="endDate" placeholder="End Date" name="endDate">                                        
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>                                            
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="transactionDate" class="col-sm-4 control-label">Notice Date <span class="text-red">*</span></label>
+                                                <div class="col-sm-8">
+                                                    <input type="date" class="form-control" id="noticeDate" placeholder="Notice Date" name="noticeDate" required="">
+                                                    <small class="">Format : mm/dd/yyyy</small>
+                                                </div>
+                                            </div>  
+                                            <div class="form-group">
+                                                <label for="pic" class="col-sm-4 control-label">PIC <span class="text-red">*</span></label>
+                                                <div class="col-sm-8">
+                                                    <select id="employeeId" name="picId" class="form-control select-item" style="width: 100%">
+                                                        @foreach($employees as $e)
+                                                            <option value="{{ $e->id }}">{{ $e->nik . ' - ' . $e->name }}</option>
+                                                        @endforeach    
+                                                    </select>
+                                                </div>
+                                            </div>                                          
                                         </div>
                                     </div>                                    
                                 </div>
@@ -83,33 +100,21 @@
                                                 <thead class="bg-gray">
                                                     <tr>
                                                         <th>Item Code</th>
-                                                        <th>Part Qty</th>
                                                         <th>Qty</th>
-                                                        <th>SW Begin</th>
-                                                        <th>SW End</th>
                                                         <th></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr>
                                                         <td>
-                                                            <select class="select-item form-control" name="item_code[]" style="width: 100%;">
+                                                            <select class="select-item form-control" name="itemCode[]" style="width: 100%;">
                                                                 @foreach ($item as $el)
-                                                                    <option value="{{ $el->id }}" data-qty="{{ $el->qty }}">{{ $el->item_code }}</option>
+                                                                    <option value="{{ $el->item_code }}">{{ $el->item_code }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </td>
                                                         <td>
-                                                            <label class="form-control" id="part_qty"></label>
-                                                        </td>
-                                                        <td>
                                                             <input type="number" min="1" name="qty[]" class="form-control" value="1">
-                                                        </td>
-                                                        <td>
-                                                            <input type="date" name="sw_begin[]" class="form-control">
-                                                        </td>
-                                                        <td>
-                                                            <input type="date" name="sw_end[]" class="form-control">
                                                         </td>
                                                         <td class="text-center">
                                                             <a href="javascript:void(0)" class="del-item"><i class="fa fa-times text-red"></i></a>
