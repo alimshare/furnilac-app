@@ -81,8 +81,6 @@ class POController extends Controller
 
 		}
 
-		// dd($orderList);
-
 		DB::beginTransaction();
 
 		$isSuccessPo = $obj->save();
@@ -100,7 +98,31 @@ class POController extends Controller
 
 	public function production($poNumber = "")
 	{
-		$obj = PO::find($poNumber);
+
+		$this->data['poNumber'] = $poNumber;
+		if ($poNumber == "") return view($this->VIEW_PATH.'production-search', $this->data);
+
+		$this->data['obj'] 	= PO::find($poNumber);
+		if ($this->data['obj'] == null) {
+			$this->data['alert'] = (object) ['message'=>'PO Number <strong>'.$poNumber.'</strong> Not Found !', 'type'=>'danger'];
+			return view($this->VIEW_PATH.'production-search', $this->data);
+		}
+
+		$detailPO = $this->data['obj']->detail;
+		foreach ($detailPO as $key => $detail) {
+			
+			$detail->total_qty = ($detail->unit_qty * $detail->qty);
+			$detail->output = $detail->getProductionOutput();
+            $detail->percentage = ($detail->output * 100) / $detail->total_qty;
+
+			$color = "danger";
+            if ($detail->percentage == 100) $color = "primary";
+            else if ($detail->percentage > 60) $color = "success";
+            else if ($detail->percentage > 30) $color = "warning";
+            $detail->color = $color;
+
+		}
+		$this->data['detailPO'] = $detailPO;
 
 		// DB::enableQueryLog();
 		// $x = $obj->mandaysReport;
@@ -108,25 +130,119 @@ class POController extends Controller
 		// print_r($query);
 		// dd('stop');
 
-		$result =  view($this->VIEW_PATH.'production-search')->with('obj', $obj)->with('poNumber', $poNumber);
-
-		if ($obj == null && $poNumber != '') {
-			return $result->with('alert', (object) ['message'=>'PO Number <strong>'.$poNumber.'</strong> Not Found !', 'type'=>'danger']);
-		}
-
-		return $result;
+		return view($this->VIEW_PATH.'production-search', $this->data);
 	}
 
 	public function productionReport($poNumber)
 	{
 		$this->data['po'] = PO::find($poNumber);
 		if ($this->data['po'] == null) return redirect($this->BASE_PATH.'/production'); // po not found, redirect to production progress index
+		
+		$detailPO = $this->data['po']->detail;
+		foreach ($detailPO as $key => $detail) {
+			
+			$detail->total_qty = ($detail->unit_qty * $detail->qty);
+			$detail->output = $detail->getProductionOutput();
+            $detail->percentage = ($detail->output * 100) / $detail->total_qty;
 
-		// foreach ($this->data['po']->detail as $key => $value) {
-		// 	dd($value->getProductionOutput());
-		// }
+			$color = "danger";
+            if ($detail->percentage == 100) $color = "primary";
+            else if ($detail->percentage > 60) $color = "success";
+            else if ($detail->percentage > 30) $color = "warning";
+            $detail->color = $color;
+
+		}
+		$this->data['po_detail'] = $detailPO;
+
 
 		$this->data['employees'] = Employee::all();
 		return view($this->VIEW_PATH.'production-report', $this->data);
+	}
+
+	public function productionMandays($poNumber)
+	{
+		$this->data['po'] = PO::find($poNumber);
+		if ($this->data['po'] == null) return redirect($this->BASE_PATH.'/production'); // po not found, redirect to production progress index
+
+		$this->data['employees'] = Employee::all();
+		return view($this->VIEW_PATH.'production-mandays', $this->data);
+	}
+
+	public function saveProductionReport(Request $req)
+	{
+		// dd('coming soon');
+		// dd($req->all());
+		
+		$poNumber	= $req->input('poNumber');
+		$picId 		= $req->input('picId');
+		$reportDate = $req->input('reportDate');
+
+		$outputList = array();
+		foreach ($req->input('output') as $partNumber => $output) {
+			
+			if ($output == 0) continue; // skip unreported progess
+
+			$outputList[] = array(
+				'po_number' 	=> $poNumber,
+				'reported_date' => $reportDate,
+				'reported_by' 	=> $picId,
+				'part_number' 	=> $partNumber,
+				'qty_output' 	=> $output,
+				'created_at'	=> date('Y-m-d H:i:s')
+			);
+		}
+
+		// dd($outputList);
+
+		// DB::beginTransaction();
+		$isSuccess = DB::table('production_report')->insert($outputList);
+
+		if ($isSuccess) {
+			// DB::commit();
+			return redirect($this->BASE_PATH.'/production/'.$poNumber)->with('alert', ['message'=>'Production Report saved !', 'type'=>'success']);
+		} else {
+			// DB::rollBack();
+			return redirect($this->BASE_PATH.'/production/'.$poNumber)->with('alert', ['message'=>'<b>failed</b> to save Production Report !', 'type'=>'danger']);
+		}
+
+	}
+
+	public function saveProductionMandays(Request $req)
+	{
+		// dd('coming soon');
+		// dd($req->all());
+
+		$poNumber	= $req->input('poNumber');
+		$picId 		= $req->input('picId');
+		$reportDate = $req->input('reportDate');
+		$employees 	= $req->input('employees');
+		$shift 		= $req->input('shift');
+
+		$manhourList = array();
+		foreach ($req->input('mh') as $key => $mh) {
+			
+			if ($mh == 0) continue; // skip unreported progress
+
+			$manhourList[] = array(
+				'po_number' 	=> $poNumber,
+				'reported_date' => $reportDate,
+				'reported_by' 	=> $picId,
+				'employee_id' 	=> $employees[$key],
+				'man_hour' 		=> $mh,
+				'shift' 		=> $shift,
+				'created_at'	=> date('Y-m-d H:i:s')
+			);
+		}
+		// dd($manhourList);
+
+		$isSuccess = DB::table('mandays_report')->insert($manhourList);
+
+		if ($isSuccess) {
+			// DB::commit();
+			return redirect($this->BASE_PATH.'/production/'.$poNumber)->with('alert', ['message'=>'Mandays Report saved !', 'type'=>'success']);
+		} else {
+			// DB::rollBack();
+			return redirect($this->BASE_PATH.'/production/'.$poNumber)->with('alert', ['message'=>'<b>failed</b> to save Mandays Report !', 'type'=>'danger']);
+		}
 	}
 }

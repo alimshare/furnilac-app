@@ -25,8 +25,8 @@ class MandaysReport extends Model
         return $this->belongsTo('\App\Model\Employee', 'employee_id', 'id');
     }
 
-    public function productionReport()
-    {
-    	return $this->belongsTo('\App\Model\ProductionReport', 'production_report_id', 'id');
-    }
+    // public function productionReport()
+    // {
+    // 	return $this->belongsTo('\App\Model\ProductionReport', 'production_report_id', 'id');
+    // }
 }

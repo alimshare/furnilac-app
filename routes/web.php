@@ -59,7 +59,9 @@ Route::get('/po/export', 'POController@export');
 // Route::get('/po/production', 'POController@productionSearch');
 Route::get('/po/production/{po_number?}', 'POController@production');
 Route::get('/po/production/{po_number}/report', 'POController@productionReport');
-Route::post('/po/production/{po_number}/report', 'POController@saveProductionProgress');
+Route::post('/po/production/{po_number}/report', 'POController@saveProductionReport');
+Route::get('/po/production/{po_number}/mandays', 'POController@productionMandays');
+Route::post('/po/production/{po_number}/mandays', 'POController@saveProductionMandays');
 
 Route::get('/user', 'UserController@list');
 Route::get('/user/new', 'UserController@new');

@@ -63,7 +63,8 @@ class PO extends Model
     *   Return Mandays Report
     */
     public function mandaysReport() {
-        return $this->hasManyThrough('\App\Model\MandaysReport', '\App\Model\ProductionReport', 'po_number', 'production_report_id', 'po_number', 'id');
+        // return $this->hasManyThrough('\App\Model\MandaysReport', '\App\Model\ProductionReport', 'po_number', 'production_report_id', 'po_number', 'id');
+        return $this->hasMany('\App\Model\MandaysReport', 'po_number', 'po_number');
     }
 
 }
