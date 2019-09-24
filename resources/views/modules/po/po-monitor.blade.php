@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('header-script')
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 <style type="text/css">
      .dark {
         background-color: #222d32;
@@ -13,11 +14,18 @@
 @endsection
 
 @section('footer-script')
- <script type="text/javascript">
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript">
+    $('.dt').DataTable({
+        "columnDefs": [
+        ]
+    });
         
     function searchPo(){
         let poNumber = document.getElementById('po_number');
-        document.location = '/po/production/' + (poNumber.value);
+        document.location = '/po/monitor/' + (poNumber.value);
     }
 
     function checkByEnter(elem) {
@@ -36,10 +44,11 @@
 @section('content')
 
     <section class="content-header">
-        <h1>Production Report <small>Management</small></h1>
+        <h1>Purchase Order Monitor<small></small></h1>
         <ol class="breadcrumb">
             <li><a href="/#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-            <li class="active"><i class="fas fa-check"></i> Production Report</li>
+            <li><a href="/#"><i class="fas fa-clipboard-list"></i> Purchse Order</a></li>
+            <li class="active"><i class="fa fa-tv"></i> Monitor</li>
         </ol>
     </section>
 
@@ -72,7 +81,6 @@
                             <ul class="nav nav-tabs">
                               <li class="active"><a href="#summary" data-toggle="tab" aria-expanded="true">Summary</a></li>
                               <li class=""><a href="#progress" data-toggle="tab" aria-expanded="false">Production Report</a></li>
-                              <li class=""><a href="#mandays" data-toggle="tab" aria-expanded="false">Man Days Report</a></li>
                             </ul>
                             <div class="tab-content">
                               <div class="tab-pane active" id="summary">                              
@@ -136,73 +144,36 @@
                               <!-- /.tab-pane -->
                               
                               <div class="tab-pane" id="progress">
-                                <div class="row">
+                                <!-- <div class="row">
                                     <div class="col-xs-12" style="margin-bottom: 10px">
                                         <a href="/po/production/{{ $obj->po_number }}/report" class="btn btn-flat btn-default"><i class="fas fa-clipboard-list"></i> &nbsp;Update Progress Report</a>
                                     </div>
+                                </div> -->
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped dt">
+                                        <thead>                                        
+                                            <tr>
+                                                <th>Production Date</th>
+                                                <th>Reported By</th>
+                                                <th>Part</th>
+                                                <th>Qty Output</th>
+                                            </tr>
+                                        </thead>
+
+                                        @foreach ($obj->productionReport as $report)
+                                            <tr>
+                                                <td>{{ $report->reported_date }}</td>
+                                                <td>{{ $report->reporter->name }}</td>
+                                                <td>{{ $report->part_number }}</td>
+                                                <td>{{ $report->qty_output }}</td>
+                                            </tr>
+                                        @endforeach
+
+                                    </table>
                                 </div>
-                                <table class="table table-bordered table-striped">
-                                    <thead>                                        
-                                        <tr>
-                                            <th>Production Date</th>
-                                            <th>Reported By</th>
-                                            <th>Part</th>
-                                            <th>Qty Output</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-
-                                    @foreach ($obj->productionReport as $report)
-                                        <tr>
-                                            <td>{{ $report->reported_date }}</td>
-                                            <td>{{ $report->reporter->name }}</td>
-                                            <td>{{ $report->part_number }}</td>
-                                            <td>{{ $report->qty_output }}</td>
-                                            <td><a href="javascript:void(0)" class="del-item"><i class="fa fa-times text-red"></i></a></td>
-                                        </tr>
-                                    @endforeach
-
-                                </table>
                               </div>
                               <!-- /.tab-pane -->
-                              
-                              <div class="tab-pane" id="mandays">
-                                
-                                <div class="row">
-                                    <div class="col-xs-12" style="margin-bottom: 10px">
-                                        <a href="/po/production/{{ $obj->po_number }}/mandays" class="btn btn-flat btn-default"><i class="fas fa-clipboard-list"></i> &nbsp;Update Man Days Report</a>
-                                    </div>
-                                </div>
 
-                                <table class="table table-bordered table-striped">
-                                    <thead>                                        
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Shift</th>
-                                            <th>Reported By</th>
-                                            <th>NIK</th>
-                                            <th>Name</th>
-                                            <th>Man Hour</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-
-                                    @foreach ($obj->mandaysReport as $report)
-                                        <tr>
-                                            <td>{{ $report->reported_date }}</td>
-                                            <td>{{ $report->shift }}</td>
-                                            <td>{{ $report->reporter->name }}</td>
-                                            <td>{{ $report->employee->nik }}</td>
-                                            <td>{{ $report->employee->name }}</td>
-                                            <td>{{ $report->man_hour }}</td>
-                                            <td><a href="javascript:void(0)" class="del-item"><i class="fa fa-times text-red"></i></a></td>
-                                        </tr>
-                                    @endforeach
-                                    
-                                </table>
-
-                              </div>
-                              <!-- /.tab-pane -->
                             </div>
                             <!-- /.tab-content -->
                           </div>

@@ -36,8 +36,10 @@ class ItemController extends Controller
 	public function save(Request $req)
 	{
 		$obj = new Obj;
-		$obj->item_code = $req->input('item_code');
-		$obj->item_name = $req->input('item_name');
+		$obj->item_code 	= $req->input('item_code');
+		$obj->item_name 	= $req->input('item_name');
+		$obj->factory_style = $req->input('factory_style');
+		$obj->buyer_style 	= $req->input('buyer_style');
 
 		if ($obj->save()) {
 			return redirect($this->BASE_PATH)->with('alert', ['message'=>'save new item success !', 'type'=>'success']);
@@ -61,7 +63,10 @@ class ItemController extends Controller
 		$obj = Obj::where('item_code', $code)->first();
 		if ($obj == null) return redirect($this->BASE_PATH); // data not found
 
-		$obj->item_name = $req->input('item_name');
+		$obj->item_name 	= $req->input('item_name');
+		$obj->factory_style = $req->input('factory_style');
+		$obj->buyer_style 	= $req->input('buyer_style');
+
 		if ($obj->save()) {
 			return redirect($this->BASE_PATH)->with('alert', ['message'=>'edit item success !', 'type'=>'success']);
 		} else {

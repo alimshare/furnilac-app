@@ -57,11 +57,17 @@ Route::post('/po/edit', 'POController@update');
 Route::get('/po/export', 'POController@export');
 
 // Route::get('/po/production', 'POController@productionSearch');
-Route::get('/po/production/{po_number?}', 'POController@production');
-Route::get('/po/production/{po_number}/report', 'POController@productionReport');
-Route::post('/po/production/{po_number}/report', 'POController@saveProductionReport');
-Route::get('/po/production/{po_number}/mandays', 'POController@productionMandays');
-Route::post('/po/production/{po_number}/mandays', 'POController@saveProductionMandays');
+Route::get('/po/monitor/{po_number?}', 'POController@monitor');
+
+Route::get('/po/production', 'POController@production');
+Route::post('/po/production/save', 'POController@productionSave');
+
+Route::get('/po/mandays', 'POController@mandays');
+Route::post('/po/mandays/save', 'POController@mandaysSave');
+// Route::get('/po/production/{po_number}/report', 'POController@productionReport');
+// Route::post('/po/production/{po_number}/report', 'POController@saveProductionReport');
+// Route::get('/po/production/{po_number}/mandays', 'POController@productionMandays');
+// Route::post('/po/production/{po_number}/mandays', 'POController@saveProductionMandays');
 
 Route::get('/user', 'UserController@list');
 Route::get('/user/new', 'UserController@new');

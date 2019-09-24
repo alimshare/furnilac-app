@@ -28,6 +28,14 @@
                                 <label for="nik" class="col-sm-4 control-label">Name</label>
                                 <div class="col-sm-8"><input type="text" class="form-control" id="item_name" placeholder="Name" name="item_name" required=""></div>
                             </div>
+                            <div class="form-group">
+                                <label for="nik" class="col-sm-4 control-label">Factory Style</label>
+                                <div class="col-sm-8"><input type="text" class="form-control" id="factory_style" placeholder="Factory Style" name="factory_style" required=""></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="nik" class="col-sm-4 control-label">Buyer Style</label>
+                                <div class="col-sm-8"><input type="text" class="form-control" id="buyer_style" placeholder="Buyer Style" name="buyer_style" required=""></div>
+                            </div>
                         </div>
                         <div class="box-footer text-right">
                             <button type="submit" class="btn btn-flat btn-primary">Save</button>

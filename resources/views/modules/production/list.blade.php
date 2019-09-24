@@ -11,8 +11,8 @@
     <script type="text/javascript">
         $('.dt').DataTable({
             "columnDefs": [
-                { "orderable": false,  "targets": 4 },
-                { "searchable": false,  "targets": 4 },
+                { "orderable": false,  "targets": 1 },
+                { "searchable": false,  "targets": 1 },
             ],
         });  
 
@@ -29,10 +29,10 @@
 @section('content')
 
     <section class="content-header">
-        <h1>Item & Parts <small>Management</small></h1>
+        <h1>Production Report <small>Management</small></h1>
         <ol class="breadcrumb">
             <li><a href="/#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-            <li class="active"><i class="fa fa-cube"></i> Item</li>
+            <li class="active"><i class="fa fa-cube"></i> Production Report</li>
         </ol>
     </section>
 
@@ -44,18 +44,15 @@
                         @include('components.alert')
                     </div>
                     <div class="box-body">
-                        <div class="text-right" style="margin-bottom: 6px;">
-                            <a href="/item/new" class="btn btn-primary btn-flat"> <i class="fa fa-plus"></i> New Item</a>
+                        <!-- <div class="text-right" style="margin-bottom: 6px;">
+                            <a href="/item/new" class="btn btn-primary btn-flat"> <i class="fa fa-plus"></i> Report</a>
                             <a href="/item/export" class="btn btn-success btn-flat"> <i class="fa fa-file-excel"></i> Export</a>
-                        </div>
+                        </div> -->
                         <div class="table-responsive">
                             <table class="table table-bordered dt">
                                 <thead>
                                     <tr>                        
-                                        <th>Item Code</th>
-                                        <th>Item Name</th>
-                                        <th>Factory Style</th>
-                                        <th>Buyer Style</th>
+                                        <th>Code</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -63,13 +60,10 @@
                                     @foreach($list as $o)
                                         <tr>
                                             <td>{{ $o->item_code }}</td>
-                                            <td>{{ $o->item_name }}</td>
-                                            <td>{{ $o->factory_style }}</td>
-                                            <td>{{ $o->buyer_style }}</td>
                                             <td class="text-left">
-                                                <a href="/item/{{ $o->item_code }}" class="btn btn-success btn-flat">Part</a>
-                                                <a href="/item/edit/{{ $o->item_code }}" class="btn btn-primary btn-flat">Edit</a>
-                                                <a href="#" class="btn btn-danger btn-flat" onclick="confirmDelete(`{{ $o->item_code }}`)">Delete</a>
+                                                <a href="/item/{{ $o->item_code }}" class="btn btn-success">Part</a>
+                                                <a href="/item/edit/{{ $o->item_code }}" class="btn btn-primary">Edit</a>
+                                                <a href="#" class="btn btn-danger" onclick="confirmDelete(`{{ $o->item_code }}`)">Delete</a>
                                             </td>
                                         </tr>
                                     @endforeach

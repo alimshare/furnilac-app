@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('header-script')
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 <link rel="stylesheet" href="/bower_components/select2/dist/css/select2.min.css">
 <style type="text/css">
 .select2-container--default .select2-selection--single {
@@ -16,8 +17,16 @@
 @endsection
 
 @section('footer-script')
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="/bower_components/select2/dist/js/select2.full.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 <script type="text/javascript">
+    $('.dt').DataTable({
+        "columnDefs": [
+        ]
+    });
+
     $(function(){
         var clone_item = $('#tbl tbody tr:first').clone();
         
@@ -55,41 +64,38 @@
 @section('content')
 
     <section class="content-header">
-        <h1>Production Report <small>Management</small></h1>
+        <h1>Mandays Report <small>Management</small></h1>
         <ol class="breadcrumb">
             <li><a href="/"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-            <li><a href="/po/production/{{ $po->po_number }}"><i class="fas fa-check"></i> Production Report</a></li>
+            <li><a href="/po">Purchase Order</a></li>
             <li class="active"><i class=""></i> Mandays Report</li>
         </ol>
     </section>
 
     <section class="content container-fluid">      
         <div class="row">
+
             <div class="col-xs-12">
-                <form class="form-horizontal" action="/po/production/{{ $po->po_number }}/mandays" method="POST">
-                    <div class="box">
+                <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#tab_1" data-toggle="tab">Form</a></li>
+              <li><a href="#tab_2" data-toggle="tab">History</a></li>
+            </ul>
+
+            <div class="tab-content">
+              <div class="tab-pane active" id="tab_1">
+                <form class="form-horizontal" action="/po/mandays/save" method="POST">
+                    <div class="box box-primary box-solid">
                         <div class="box-header with-border">
-                            <h3 class="box-title"><i class="fas fa-clipboard-list"></i> &nbsp;Mandays Report</h3>
+                            <!-- <h3 class="box-title"><i class="fas fa-clipboard-list"></i> &nbsp;Mandays Form</h3> -->
                         </div>
                         <div class="box-body">
                             @csrf
-                            <div class="form-group">
-                                <label for="poNumber" class="col-sm-2 control-label">PO Number </label>
-                                <div class="col-sm-5">
-                                    <input type="text" class="form-control" id="poNumber" placeholder="PO Number" name="poNumber" required="" readonly="" value="{{ $po->po_number }}">
-                                </div>
-                            </div>
                             <div class="form-group">
                                 <label for="reportDate" class="col-sm-2 control-label">Report Date <span class="text-red">*</span></label>
                                 <div class="col-sm-5">
                                     <input type="date" class="form-control" id="reportDate" placeholder="Report Date" name="reportDate" required="">
                                     <small class="">Format : mm/dd/yyyy</small>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="poNumber" class="col-sm-2 control-label">Shift </label>
-                                <div class="col-sm-5">
-                                    <input type="text" class="form-control" id="shift" placeholder="Shift" name="shift" value="">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -100,6 +106,12 @@
                                             <option value="{{ $e->id }}">{{ $e->nik . ' - ' . $e->name }}</option>
                                         @endforeach    
                                     </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="poNumber" class="col-sm-2 control-label">Shift </label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" id="shift" placeholder="Shift" name="shift" value="">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -122,7 +134,7 @@
                                                         @endforeach
                                                     </select>
                                                 </td>
-                                                <td><input type="number" name="mh[]" id="mh" class="form-control" min="0" max="24" value="0" required=""></td>
+                                                <td><input type="number" name="mh[]" id="mh" class="form-control" min="0" max="24" value="0" required="" onkeyup="setMax(this, 24)"></td>
                                                 <td class="text-center">
                                                     <a href="javascript:void(0)" class="del-item"><i class="fa fa-times text-red"></i></a>
                                                 </td>
@@ -139,11 +151,38 @@
                         </div>
                         <div class="box-footer text-right">
                             <button type="submit" class="btn btn-flat btn-primary">Save</button>
-                            <a href="/po/production/{{ $po->po_number }}" class="btn btn-flat btn-default">Cancel</a>
+                            <a href="/po" class="btn btn-flat btn-default">Cancel</a>
                         </div>
                     </div>
                 </form>
-
+              </div>
+              <!-- /.tab-pane -->
+              <div class="tab-pane" id="tab_2">
+                <table class="table table-bordered table-striped dt">
+                    <thead>
+                        <tr>
+                            <th>Report Date</th>
+                            <th>Reporter</th>
+                            <th>Employee</th>
+                            <th>Mandays</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($mandays as $o)
+                        <tr>
+                            <td>{{ $o->reported_date }}</td>
+                            <td>{{ $o->reporter->nik }} - {{ $o->reporter->name }}</td>
+                            <td>{{ $o->employee->nik }} - {{ $o->employee->name }}</td>
+                            <td>{{ $o->man_hour }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+              </div>
+              <!-- /.tab-pane -->
+            </div>
+            <!-- /.tab-content -->
+          </div>
             </div>
         </div>
     </section>

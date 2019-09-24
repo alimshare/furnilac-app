@@ -11,8 +11,8 @@
     <script type="text/javascript">
         $('.dt').DataTable({
             "columnDefs": [
-                { "orderable": false,  "targets": 4 },
-                { "searchable": false,  "targets": 4 },
+                { "orderable": false,  "targets": 5 },
+                { "searchable": false,  "targets": 5 },
             ],
         });  
 
@@ -73,8 +73,8 @@
                                             <td>{{ $o->qty }}</td>
                                             <td class="text-right">{{ number_format($o->price,0,',','. ') }}</td>
                                             <td class="text-left">
-                                                <a href="/item/{{ $o->item_code }}/edit/{{ $o->part_number }}" class="btn btn-primary">Edit</a>
-                                                <a href="#" class="btn btn-danger" onclick="confirmDelete(`{{ $o->item_code }}`,`{{ $o->part_number }}`)">Delete</a>
+                                                <a href="/item/{{ $o->item_code }}/edit/{{ $o->part_number }}" class="btn btn-primary btn-flat">Edit</a>
+                                                <a href="#" class="btn btn-danger btn-flat" onclick="confirmDelete(`{{ $o->item_code }}`,`{{ $o->part_number }}`)">Delete</a>
                                             </td>
                                         </tr>
                                     @endforeach

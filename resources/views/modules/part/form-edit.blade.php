@@ -8,7 +8,7 @@
             <li><a href="/#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
             <li><a href="/item"><i class="fa fa-cube"></i> Item</a></li>
             <li><a href="/item/{{ $object->item_code }}"><i class="fa fa-cube"></i> Part</a></li>
-            <li class="active">New</li>
+            <li class="active">Edit</li>
         </ol>
     </section>
 
@@ -43,7 +43,7 @@
                             </div>
                         </div>
                         <div class="box-footer text-right">
-                            <button type="submit" class="btn btn-flat btn-primary">Update</button>
+                            <button type="submit" class="btn btn-flat btn-success">Update</button>
                             <a href="#" onclick="history.back()" class="btn btn-flat btn-default">Cancel</a>
                         </div>
                     </div>
