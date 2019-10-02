@@ -15,14 +15,14 @@ class PO extends Model
      *
      * @var string
      */
-    protected $primaryKey = 'po_number';
+    // protected $primaryKey = 'po_number';
 
     /**
      * The "type" of the primary key ID.
      *
      * @var string
      */
-    protected $keyType = 'char';
+    // protected $keyType = 'char';
 
     /**
     *   Return Employee choosen as a PIC for current PO
@@ -53,6 +53,13 @@ class PO extends Model
     }
 
     /**
+    *   Return Detail PO
+    */
+    public function prices() {
+        return $this->hasMany('\App\Model\POPrice', 'po_number', 'po_number');
+    }
+
+    /**
     *   Return Production Report Progress
     */
     public function productionReport() {
@@ -65,6 +72,18 @@ class PO extends Model
     public function mandaysReport() {
         // return $this->hasManyThrough('\App\Model\MandaysReport', '\App\Model\ProductionReport', 'po_number', 'production_report_id', 'po_number', 'id');
         return $this->hasMany('\App\Model\MandaysReport', 'po_number', 'po_number');
+    }
+
+    public function itemExists($itemCode)
+    {
+        $item = $this->prices()->where('item_code', $itemCode)->first();
+        return ($item == null) ? false : true;
+    }
+
+    public function partExists($partNumber)
+    {
+        $part = $this->detail()->where('part_number', $partNumber)->first();
+        return ($part == null) ? false : true;
     }
 
 }

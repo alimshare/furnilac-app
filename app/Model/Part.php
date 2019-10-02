@@ -15,12 +15,16 @@ class Part extends Model
      *
      * @var string
      */
-    protected $primaryKey = 'part_number';
+    // protected $primaryKey = 'part_number';
 
     /**
      * The "type" of the primary key ID.
      *
      * @var string
      */
-    protected $keyType = 'char';
+    // protected $keyType = 'char';
+
+    public function item(){
+        return $this->belongsTo('\App\Model\Item','item_code','item_code');
+    }
 }

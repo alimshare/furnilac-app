@@ -7,7 +7,7 @@
         <ol class="breadcrumb">
             <li><a href="/#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
             <li><a href="/item"><i class="fa fa-cube"></i> Item</a></li>
-            <li><a href="/item/{{ $object->item_code }}"><i class="fa fa-cube"></i> Part</a></li>
+            <li><a href="/item/{{ $item_id }}"><i class="fa fa-cube"></i> Part</a></li>
             <li class="active">Edit</li>
         </ol>
     </section>
@@ -15,7 +15,7 @@
     <section class="content container-fluid">      
         <div class="row">
             <div class="col-xs-6">
-                <form class="form-horizontal" action="/item/{{ $object->item_code }}/edit" method="POST">
+                <form class="form-horizontal" action="/item/{{ $item_id }}/edit" method="POST">
                     <div class="box">
                         <div class="box-header">
                         </div>

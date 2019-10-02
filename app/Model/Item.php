@@ -15,12 +15,17 @@ class Item extends Model
      *
      * @var string
      */
-    protected $primaryKey = 'item_code';
+    // protected $primaryKey = 'item_code';
 
     /**
      * The "type" of the primary key ID.
      *
      * @var string
      */
-    protected $keyType = 'char';
+    // protected $keyType = 'char';
+
+
+    public function parts(){
+        return $this->hasMany('\App\Model\Part','item_code', 'item_code');
+    }
 }

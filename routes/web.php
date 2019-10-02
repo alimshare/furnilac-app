@@ -42,19 +42,20 @@ Route::post('/item/edit', 'ItemController@update');
 Route::post('/item/delete', 'ItemController@delete');
 Route::get('/item/export', 'ItemController@export');
 
-Route::get('/item/{item_code}', 'ItemController@part_list');
-Route::get('/item/{item_code}/new', 'ItemController@part_new');
-Route::post('/item/{item_code}/new', 'ItemController@part_save');
-Route::get('/item/{item_code}/edit/{part_number}', 'ItemController@part_edit');
-Route::post('/item/{item_code}/edit', 'ItemController@part_update');
-Route::post('/item/{item_code}/delete', 'ItemController@part_delete');
+Route::get('/item/{id}', 'ItemController@part_list');
+Route::get('/item/{id}/new', 'ItemController@part_new');
+Route::post('/item/{id}/new', 'ItemController@part_save');
+Route::get('/item/{id}/edit/{part_id}', 'ItemController@part_edit');
+Route::post('/item/{id}/edit', 'ItemController@part_update');
+Route::post('/item/{id}/delete', 'ItemController@part_delete');
 
 Route::get('/po', 'POController@list');
 Route::get('/po/new', 'POController@new');
 Route::post('/po/new', 'POController@save');
-Route::get('/po/edit', 'POController@edit');
+Route::get('/po/edit/{poNumber?}', 'POController@edit');
 Route::post('/po/edit', 'POController@update');
 Route::get('/po/export', 'POController@export');
+Route::post('/po/delete', 'POController@delete');
 
 // Route::get('/po/production', 'POController@productionSearch');
 Route::get('/po/monitor/{po_number?}', 'POController@monitor');

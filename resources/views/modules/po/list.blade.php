@@ -16,13 +16,13 @@
             ]
         });     
 
-        function confirmDelete(id){
+        function confirmDelete(poNumber){
           var response = confirm('Yakin ingin menghapus data ini ?');
           if (response) {
-            document.getElementById('deletedId').value = id;
+            document.getElementById('deletedPONumber').value = poNumber;
             document.getElementById('formDelete').submit();
           }
-        }  
+        } 
     </script>
 @endsection
 
@@ -68,9 +68,9 @@
                                             <td>{{ $o->buyer->name }}</td>
                                             <td>{{ $o->pic->nik . ' - ' .$o->pic->name }}</td>
                                             <td>
-                                                <a href="/po/monitor/{{ $o->po_number }}" class="btn btn-info btn-flat">View</a>
-                                                <a href="/po/edit/{{ $o->po_number }}" class="btn btn-primary btn-flat">Edit</a>
-                                                <a href="#" class="btn btn-danger btn-flat" onclick="confirmDelete({{ $o->po_number }})">Delete</a>
+                                                <a href="/po/monitor/{{ base64_encode($o->po_number) }}" class="btn btn-info btn-flat">View</a>
+                                                <a href="/po/edit/{{ base64_encode($o->po_number) }}" class="btn btn-primary btn-flat">Edit</a>
+                                                <a href="#" class="btn btn-danger btn-flat" onclick="confirmDelete(`{{ $o->po_number }}`)">Delete</a>
                                                 <!-- <a href="/po/production/{{ $o->po_number }}" class="btn btn-default btn-flat">Production</a> -->
                                             </td>
                                         </tr>
@@ -87,7 +87,7 @@
 
     <form action="/po/delete" method="POST" id="formDelete">
         @csrf
-        <input type="hidden" name="deletedId" id="deletedId">
+        <input type="hidden" name="deletedPONumber" id="deletedPONumber">
     </form>
 
 

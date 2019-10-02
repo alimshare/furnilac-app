@@ -16,12 +16,12 @@
             ],
         });  
 
-        function confirmDelete(itemCode, partNumber){
+        function confirmDelete(itemId, partNumber){
           var response = confirm('Yakin ingin menghapus data ini ?');
           if (response) {
             document.getElementById('deletedId').value = partNumber;
-            document.getElementById('item_code').value = itemCode;
-            document.getElementById('formDelete').action = "/item/"+itemCode+"/delete";
+            document.getElementById('item_id').value = itemId;
+            document.getElementById('formDelete').action = "/item/"+itemId+"/delete";
             document.getElementById('formDelete').submit();
             // alert(document.getElementById('formDelete').action);
           }
@@ -49,8 +49,7 @@
                     </div>
                     <div class="box-body">
                         <div class="text-right" style="margin-bottom: 6px;">
-                            <a href="/item/{{ $list->item_code }}/new" class="btn btn-primary btn-flat"> <i class="fa fa-plus"></i> New Part</a>
-                            <!-- <a href="/item/export" class="btn btn-success btn-flat"> <i class="fa fa-file-excel"></i> Export</a> -->
+                            <a href="/item/{{ $list->item_id }}/new" class="btn btn-primary btn-flat"> <i class="fa fa-plus"></i> New Part</a>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-bordered dt">
@@ -73,16 +72,12 @@
                                             <td>{{ $o->qty }}</td>
                                             <td class="text-right">{{ number_format($o->price,0,',','. ') }}</td>
                                             <td class="text-left">
-                                                <a href="/item/{{ $o->item_code }}/edit/{{ $o->part_number }}" class="btn btn-primary btn-flat">Edit</a>
-                                                <a href="#" class="btn btn-danger btn-flat" onclick="confirmDelete(`{{ $o->item_code }}`,`{{ $o->part_number }}`)">Delete</a>
+                                                <a href="/item/{{ $list->item_id }}/edit/{{ $o->id }}" class="btn btn-primary btn-flat">Edit</a>
+                                                <a href="#" class="btn btn-danger btn-flat" onclick="confirmDelete(`{{ $list->item_id }}`,`{{ $o->part_number }}`)">Delete</a>
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
-                                <tfoot>
-                                    <th></th>
-                                    <th></th>
-                                </tfoot>
                             </table>
                         </div>                        
                     </div>
@@ -95,7 +90,7 @@
     <form method="POST" id="formDelete">
         @csrf
         <input type="hidden" name="deletedId" id="deletedId">
-        <input type="hidden" name="item_code" id="item_code">
+        <input type="hidden" name="item_id" id="item_id">
     </form>
 
 @endsection

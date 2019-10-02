@@ -48,9 +48,9 @@ class ItemController extends Controller
 		}
 	}
     
-	public function edit($code)
+	public function edit($id)
 	{
-		$obj = Obj::where('item_code', $code)->first();
+		$obj = Obj::find($id);
 		if ($obj == null) return redirect($this->BASE_PATH); // data not found
 
 		return view($this->VIEW_PATH.'form-edit')->with('object', $obj);
@@ -93,19 +93,19 @@ class ItemController extends Controller
 		return Excel::download(new PartExport, 'item-parts.xlsx');
 	}
 
-	public function part_list($item_code){
-		$list = \App\Model\Part::where('item_code', $item_code)->get();
-		$list->item_code = $item_code;
+	public function part_list($id){
+		$item = \App\Model\Item::find($id);
+		$list = $item->parts;
+		$list->item_id = $item->id;
 		return view('modules.item.part')->with('list', $list);
 	}
     
-	public function part_new($item_code)
+	public function part_new($id)
 	{
-		$item = Obj::where('item_code', $item_code)->first();
+		$item = \App\Model\Item::find($id);
 		if ($item == null) return redirect($this->BASE_PATH); // data not found
 
-
-		return view('modules.part.form')->with('item_code', $item_code);
+		return view('modules.part.form')->with('item_code', $item->item_code)->with('item_id', $item->id);
 	}
     
 	public function part_save(Request $req)
@@ -122,25 +122,27 @@ class ItemController extends Controller
 		$obj->qty	 		= $req->input('qty');
 
 		if ($obj->save()) {
-			return redirect($this->BASE_PATH.'/'.$obj->item_code)->with('alert', ['message'=>'save part success !', 'type'=>'success']);
+			return redirect($this->BASE_PATH.'/'.$item->id)
+				->with('alert', ['message'=>'save part success !', 'type'=>'success']);
 		} else {
-			return redirect($this->BASE_PATH.'/'.$obj->item_code)->with('alert', ['message'=>'<b>failed</b> to save part !', 'type'=>'danger']);
+			return redirect($this->BASE_PATH.'/'.$item->id)
+				->with('alert', ['message'=>'<b>failed</b> to save part !', 'type'=>'danger']);
 		}
 
-		return view('modules.part.form')->with('item_code', $item_code);
+		return view('modules.part.form')->with('item_code', $item_code)->with('item_id', $item->id);
 	}
     
-	public function part_edit(Request $req, $item_code, $part_number)
+	public function part_edit(Request $req, $id, $part_id)
 	{
-		$item = Obj::where('item_code', $item_code)->first();
+		$item = Obj::find($id);
 		if ($item == null) return redirect($this->BASE_PATH); // data not found]
 
-		$part = \App\Model\Part::where('part_number', $part_number)->first();
+		$part = \App\Model\Part::find($part_id);
 		if ($item == null) return redirect($this->BASE_PATH); // data not found]
 
 		// dd($part);
 
-		return view('modules.part.form-edit')->with('object', $part);
+		return view('modules.part.form-edit')->with('object', $part)->with('item_id', $item->id);
 	}
     
 	public function part_update(Request $req)
@@ -155,16 +157,18 @@ class ItemController extends Controller
 		$obj->qty	 		= $req->input('qty');
 
 		if ($obj->save()) {
-			return redirect($this->BASE_PATH.'/'.$obj->item_code)->with('alert', ['message'=>'edit part success !', 'type'=>'success']);
+			return redirect($this->BASE_PATH.'/'.$obj->item->id)
+				->with('alert', ['message'=>'edit part success !', 'type'=>'success']);
 		} else {
-			return redirect($this->BASE_PATH.'/'.$obj->item_code)->with('alert', ['message'=>'<b>failed</b> to edit part !', 'type'=>'danger']);
+			return redirect($this->BASE_PATH.'/'.$obj->item->id)
+				->with('alert', ['message'=>'<b>failed</b> to edit part !', 'type'=>'danger']);
 		}
 	}
 
 	public function part_delete(Request $req)
 	{
 		$partNumber = $req->input('deletedId');
-		$redirectPath = $this->BASE_PATH.'/'.$req->input('item_code');
+		$redirectPath = $this->BASE_PATH.'/'.$req->input('item_id');
 
 		$obj = \App\Model\Part::where('part_number', $partNumber)->first();
 		if ($obj == null) return redirect($redirectPath); // data not found

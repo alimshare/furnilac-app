@@ -67,17 +67,13 @@
                                             <td>{{ $o->factory_style }}</td>
                                             <td>{{ $o->buyer_style }}</td>
                                             <td class="text-left">
-                                                <a href="/item/{{ $o->item_code }}" class="btn btn-success btn-flat">Part</a>
-                                                <a href="/item/edit/{{ $o->item_code }}" class="btn btn-primary btn-flat">Edit</a>
+                                                <a href="/item/{{ $o->id }}" class="btn btn-success btn-flat">Part</a>
+                                                <a href="/item/edit/{{ $o->id }}" class="btn btn-primary btn-flat">Edit</a>
                                                 <a href="#" class="btn btn-danger btn-flat" onclick="confirmDelete(`{{ $o->item_code }}`)">Delete</a>
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
-                                <tfoot>
-                                    <th></th>
-                                    <th></th>
-                                </tfoot>
                             </table>
                         </div>                        
                     </div>
