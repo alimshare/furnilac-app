@@ -56,6 +56,7 @@ Route::get('/po/edit/{poNumber?}', 'POController@edit');
 Route::post('/po/edit', 'POController@update');
 Route::get('/po/export', 'POController@export');
 Route::post('/po/delete', 'POController@delete');
+Route::post('/po/delete/item', 'POController@deleteItem');
 
 // Route::get('/po/production', 'POController@productionSearch');
 Route::get('/po/monitor/{po_number?}', 'POController@monitor');

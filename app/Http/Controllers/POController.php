@@ -134,6 +134,7 @@ class POController extends Controller
 		// dd($req->all());
 
 		$poNumber 	= $req->input('poNumber');
+
 		$po = \App\Model\PO::where('po_number', $poNumber)->first();
 		if ($po == null) return redirect($this->BASE_PATH)->with('alert', ['message'=>'PO Number Not Found !', 'type'=>'danger']);
 
@@ -205,6 +206,7 @@ class POController extends Controller
 			foreach ($partList as $key => $part) {				
 				$detail = array();
 				$detail['po_number'] 	= $poNumber;
+				$detail['item_code'] 	= $itemCode;
 				$detail['part_number'] 	= $part->part_number;
 				$detail['unit_qty'] 	= $part->qty;
 				$detail['price'] 		= $part->price;
@@ -224,12 +226,14 @@ class POController extends Controller
 		$isSuccessPrices = DB::table('po_price')->insert($poPrices);
 		$isSuccessDetail = DB::table('po_detail')->insert($orderList);
 
+		$redirectTo = $this->BASE_PATH.'/edit/'.base64_encode($poNumber);
+
 		if ($isSuccessPo && $isSuccessPrices && $isSuccessDetail) {
 			DB::commit();
-			return redirect($this->BASE_PATH)->with('alert', ['message'=>'update PO success !', 'type'=>'success']);
+			return redirect($redirectTo)->with('alert', ['message'=>'update PO success !', 'type'=>'success']);
 		} else {
 			DB::rollBack();
-			return redirect($this->BASE_PATH)->with('alert', ['message'=>'<b>failed</b> to update PO !', 'type'=>'danger']);
+			return redirect($redirectTo)->with('alert', ['message'=>'<b>failed</b> to update PO !', 'type'=>'danger']);
 		}
 	}
 
@@ -384,6 +388,26 @@ class POController extends Controller
 			return redirect($this->BASE_PATH)->with('alert', ['message'=>'delete PO success !', 'type'=>'success']);
 		} else {
 			return redirect($this->BASE_PATH)->with('alert', ['message'=>'<b>failed</b> to delete PO !', 'type'=>'danger']);
+		}
+	}
+
+	public function deleteItem(Request $req)
+	{
+		$poNumber = $req->input('poNumberRef');
+		$itemCode = $req->input('deletedItemCode');
+
+		$redirectTo = $this->BASE_PATH.'/edit/'.base64_encode($poNumber);
+
+		DB::beginTransaction();
+		$resultDeleteDetail 	= \App\Model\PODetail::where('po_number', $poNumber)->where('item_code', $itemCode)->delete();
+		$resultDeletePrice 	= \App\Model\POPrice::where('po_number', $poNumber)->where('item_code', $itemCode)->delete();
+
+		if ($resultDeleteDetail && $resultDeletePrice) {
+			DB::commit();
+			return redirect($redirectTo)->with('alert', ['message'=>'delete item '. $itemCode .' success !', 'type'=>'success']);
+		} else {
+			DB::rollBack();
+			return redirect($redirectTo)->with('alert', ['message'=>'<b>failed</b> to delete item '. $itemCode .' !', 'type'=>'danger']);
 		}
 	}
 }

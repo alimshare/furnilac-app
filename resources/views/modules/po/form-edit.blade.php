@@ -31,6 +31,9 @@
             <div class="col-xs-12 col-lg-12">
                 <form class="form-horizontal" action="/po/edit" method="POST">
                     <div class="box">
+                        <div class="box-header">                            
+                        @include('components.alert')
+                        </div>
                         <div class="box-body">
                             <div class="row">
                                 <div class="col-md-12 col-lg-8">
@@ -136,9 +139,9 @@
                                                                         <input type="text" name="item[{{ $p->item_code }}][price]" value="{{ number_format($p->selling_price, 0, ',', '.') }}" class="form-control text-right" onkeyup="formatRupiah(this, this.value, '')">
                                                                     </td>
                                                                     <td class="text-center">
-                                                                        <a href="javascript:void(0)" class="mark-done-item"><i class="fa fa-check text-green" title="mark as done"></i></a>
-                                                                        <a href="javascript:void(0)" class="mark-done-item"><i class="fa fa-comment" title="note"></i></a>
-                                                                        <!-- <a href="javascript:void(0)" class="del-item"><i class="fa fa-times text-red" title="cancel"></i></a> -->
+                                                                        @if (!$p->onProgress())
+                                                                            <a href="javascript:void(0)" onclick="confirmDeleteItemFromPO(`{{ $p->po_number }}`,`{{ $p->item_code }}`)"><i class="fa fa-times text-red" title="cancel"></i></a>
+                                                                        @endif
                                                                     </td>
                                                                 </tr>
                                                             @endforeach
@@ -189,6 +192,7 @@
                                                                 <th>Qty per Item</th>
                                                                 <th>Base Price</th>
                                                                 <th>Total Qty</th>
+                                                                <th>Current Qty</th>
                                                                 <th></th>
                                                             </tr>
                                                         </thead>
@@ -199,6 +203,7 @@
                                                                     <td class="text-right">{{ $d->unit_qty }}</td>
                                                                     <td class="text-right">{{ number_format($d->price, 0, ',', '.') }}</td>
                                                                     <td class="text-right">{{ $d->unit_qty * $d->qty }}</td>
+                                                                    <td class="text-right">{{ $d->getProductionOutput() }}</td>
                                                                     <td class="text-center">
                                                                         <a href="javascript:void(0)" class="mark-done-item"><i class="fa fa-check text-green" title="mark as done"></i></a>
                                                                         <a href="javascript:void(0)" class="mark-done-item"><i class="fa fa-comment" title="note"></i></a>
@@ -232,6 +237,12 @@
             </div>
         </div>
     </section>
+
+    <form action="/po/delete/item" method="POST" id="formDelete">
+        @csrf 
+        <input type="hidden" name="poNumberRef" id="poNumberRef">
+        <input type="hidden" name="deletedItemCode" id="deletedItemCode">
+    </form>
 
 @endsection
 
@@ -307,9 +318,18 @@
         }
 
         rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-        // let result = prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
 
         elem.value = rupiah;
     }
+
+    function confirmDeleteItemFromPO(poNumber, itemCode) {
+        var response = confirm('Yakin ingin menghapus item '+itemCode+' dari PO Number : '+ poNumber +' ?');
+        if (response) {
+            document.getElementById('poNumberRef').value = poNumber;
+            document.getElementById('deletedItemCode').value = itemCode;
+            document.getElementById('formDelete').submit();
+        }
+    }
+
 </script>
 @endsection
