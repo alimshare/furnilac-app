@@ -39,6 +39,8 @@ class EmployeeController extends Controller
 		$obj = new Obj;
 		$obj->nik  = $req->input('nik');
 		$obj->name = $req->input('name');
+		$obj->ktp  = $req->input('ktp');
+		$obj->rekening = $req->input('rekening');
 
 		if ($obj->save()) {
 			return redirect($this->BASE_PATH)->with('alert', ['message'=>'save new employee success !', 'type'=>'success']);
@@ -64,6 +66,8 @@ class EmployeeController extends Controller
 
 		$obj->nik  = $req->input('nik');
 		$obj->name = $req->input('name');
+		$obj->ktp  = $req->input('ktp');
+		$obj->rekening = $req->input('rekening');
 
 		if ($obj->save()) {
 			return redirect($this->BASE_PATH)->with('alert', ['message'=>'edit employee success !', 'type'=>'success']);

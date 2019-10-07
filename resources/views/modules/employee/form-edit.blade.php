@@ -29,6 +29,14 @@
                                 <label for="nik" class="col-sm-2 control-label">Name</label>
                                 <div class="col-sm-10"><input type="text" class="form-control" id="name" placeholder="Name" name="name" required=""  value="{{ $obj->name }}"></div>
                             </div>
+                            <div class="form-group">
+                                <label for="ktp" class="col-sm-2 control-label">KTP</label>
+                                <div class="col-sm-10"><input type="text" class="form-control" id="ktp" placeholder="Nomor KTP" name="ktp" value="{{ $obj->ktp }}"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="rekening" class="col-sm-2 control-label">Rekening</label>
+                                <div class="col-sm-10"><input type="text" class="form-control" id="rekening" placeholder="Nomor Rekening" name="rekening" required="" value="{{ $obj->rekening }}"></div>
+                            </div>
                         </div>
                         <div class="box-footer text-right">
                             <button type="submit" class="btn btn-flat btn-primary">Edit</button>

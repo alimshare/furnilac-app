@@ -25,8 +25,16 @@
                                 <div class="col-sm-10"><input type="text" class="form-control" id="nik" placeholder="NIK" name="nik" required=""></div>
                             </div>
                             <div class="form-group">
-                                <label for="nik" class="col-sm-2 control-label">Name</label>
+                                <label for="name" class="col-sm-2 control-label">Name</label>
                                 <div class="col-sm-10"><input type="text" class="form-control" id="name" placeholder="Name" name="name" required=""></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ktp" class="col-sm-2 control-label">KTP</label>
+                                <div class="col-sm-10"><input type="text" class="form-control" id="ktp" placeholder="Nomor KTP" name="ktp" required=""></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="rekening" class="col-sm-2 control-label">Rekening</label>
+                                <div class="col-sm-10"><input type="text" class="form-control" id="rekening" placeholder="Nomor Rekening" name="rekening" required=""></div>
                             </div>
                         </div>
                         <div class="box-footer text-right">
