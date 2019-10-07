@@ -48,6 +48,9 @@
         <li><a href="/po/production"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Production Report</span></a></li>
         <li><a href="/po/mandays"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Mandays Report</span></a></li>
         
+        <li class="header">Export</li>
+        <li><a href="/report/salary"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Salary Report</span></a></li>
+        
         <li class="header">Other</li>
         <li><a href="/user"><i class="fa fa-users"></i> <span>User Application</span></a></li>
         <li><a href="/change-password"><i class="fa fa-key"></i> <span> Change Password</span></a></li>

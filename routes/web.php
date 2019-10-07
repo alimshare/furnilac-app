@@ -66,10 +66,6 @@ Route::post('/po/production/save', 'POController@productionSave');
 
 Route::get('/po/mandays', 'POController@mandays');
 Route::post('/po/mandays/save', 'POController@mandaysSave');
-// Route::get('/po/production/{po_number}/report', 'POController@productionReport');
-// Route::post('/po/production/{po_number}/report', 'POController@saveProductionReport');
-// Route::get('/po/production/{po_number}/mandays', 'POController@productionMandays');
-// Route::post('/po/production/{po_number}/mandays', 'POController@saveProductionMandays');
 
 Route::get('/user', 'UserController@list');
 Route::get('/user/new', 'UserController@new');
@@ -78,3 +74,6 @@ Route::get('/user/edit/{id?}', 'UserController@edit');
 Route::post('/user/edit', 'UserController@update');
 Route::post('/user/delete', 'UserController@delete');
 Route::post('/user/change-password', 'UserController@changePassword');
+
+Route::get('/report/salary', 'ReportController@form');
+Route::post('/report/salary/export', 'ReportController@export');

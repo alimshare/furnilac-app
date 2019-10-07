@@ -165,6 +165,7 @@
                             <th>Reporter</th>
                             <th>Employee</th>
                             <th>Mandays</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -173,7 +174,10 @@
                             <td>{{ $o->reported_date }}</td>
                             <td>{{ $o->reporter->nik }} - {{ $o->reporter->name }}</td>
                             <td>{{ $o->employee->nik }} - {{ $o->employee->name }}</td>
-                            <td>{{ $o->man_hour }}</td>
+                            <td class="text-right">{{ $o->man_hour }}</td>
+                            <td class="text-center">
+                                <a href="javascript:void(0)"><i class="fa fa-times text-red" title="cancel"></i></a>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>

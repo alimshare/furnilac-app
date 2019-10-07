@@ -407,7 +407,7 @@ class POController extends Controller
 			return redirect($redirectTo)->with('alert', ['message'=>'delete item '. $itemCode .' success !', 'type'=>'success']);
 		} else {
 			DB::rollBack();
-			return redirect($redirectTo)->with('alert', ['message'=>'<b>failed</b> to delete item '. $itemCode .' !', 'type'=>'danger']);
+			return redirect($redirectTo)->with('alert', ['message'=>'failed to delete item '. $itemCode .' !', 'type'=>'danger']);
 		}
 	}
 }

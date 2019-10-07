@@ -205,8 +205,8 @@
                                                                     <td class="text-right">{{ $d->unit_qty * $d->qty }}</td>
                                                                     <td class="text-right">{{ $d->getProductionOutput() }}</td>
                                                                     <td class="text-center">
-                                                                        <a href="javascript:void(0)" class="mark-done-item"><i class="fa fa-check text-green" title="mark as done"></i></a>
-                                                                        <a href="javascript:void(0)" class="mark-done-item"><i class="fa fa-comment" title="note"></i></a>
+                                                                        <a href="javascript:void(0)" class="mark-done-item"><i class="fa fa-check text-green" title="mark as done" onclick="alert('coming soon')"></i></a>
+                                                                        <a href="javascript:void(0)" class="mark-done-item"><i class="fa fa-comment" title="note" onclick="alert('coming soon')"></i></a>
                                                                         <!-- <a href="javascript:void(0)" class="del-item"><i class="fa fa-times text-red" title="cancel"></i></a> -->
                                                                     </td>
                                                                 </tr>
