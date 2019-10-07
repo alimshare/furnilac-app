@@ -41,6 +41,12 @@ class ItemController extends Controller
 		$obj->factory_style = $req->input('factory_style');
 		$obj->buyer_style 	= $req->input('buyer_style');
 
+		$temp = Obj::where('item_code', $obj->item_code)->first();
+		if ($temp != null) {
+			return redirect($this->BASE_PATH)->with('alert', 
+				['message'=>'Item '.($obj->item_code).' already exists !', 'type'=>'danger']);
+		}
+
 		if ($obj->save()) {
 			return redirect($this->BASE_PATH)->with('alert', ['message'=>'save new item success !', 'type'=>'success']);
 		} else {
@@ -120,6 +126,12 @@ class ItemController extends Controller
 		$obj->part_name 	= $req->input('part_name');
 		$obj->price	 		= $req->input('price');
 		$obj->qty	 		= $req->input('qty');
+
+		$temp = \App\Model\Part::where('part_number', $obj->part_number)->first();
+		if ($temp != null) {
+			return redirect($this->BASE_PATH.'/'.$item->id)->with('alert', 
+				['message'=>'Part '.($obj->part_number).' already used !', 'type'=>'danger']);
+		}
 
 		if ($obj->save()) {
 			return redirect($this->BASE_PATH.'/'.$item->id)
