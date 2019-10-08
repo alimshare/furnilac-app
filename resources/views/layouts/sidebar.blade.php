@@ -36,7 +36,8 @@
             <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="/employee"><i class="fa fa-users"></i>Employee</a></li>
+            <li><a href="/group"><i class="fa fa-users"></i>Group</a></li>
+            <li><a href="/employee"><i class="fa fa-user"></i>Employee</a></li>
             <li><a href="/buyer"><i class="fa fa-user"></i>Buyer</a></li>
             <li><a href="/item"><i class="fa fa-cube"></i> Item & Parts</a></li>
           </ul>
@@ -45,11 +46,16 @@
         <li><a href="/po/monitor"><i class="fa fa-tv"></i>&nbsp;&nbsp;<span> PO Monitor</span></a></li>
 
         <li class="header">Production</li>
-        <li><a href="/po/production"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Production Report</span></a></li>
-        <li><a href="/po/mandays"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Mandays Report</span></a></li>
+        <li><a href="/po/production"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Production</span></a></li>
+        <li><a href="/po/mandays"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Mandays</span></a></li>
         
         <li class="header">Export</li>
-        <li><a href="/report/salary"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Salary Report</span></a></li>
+        <li><a href="/report/production"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Production Report</span></a></li>
+        <li><a href="/report/mandays"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Mandays Report</span></a></li>
+        <li><a href="/report/group"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Group Salary Report</span></a></li>
+        <li><a href="/report/group/summary"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Summary Group Salary</span></a></li>
+        <li><a href="/report/receh"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Receh Report</span></a></li>
+        <li><a href="/report/salary"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Summary Salary Report</span></a></li>
         
         <li class="header">Other</li>
         <li><a href="/user"><i class="fa fa-users"></i> <span>User Application</span></a></li>

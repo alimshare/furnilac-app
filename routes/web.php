@@ -18,6 +18,13 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/change-password', 'HomeController@changePassword')->name('change-password');
 
+Route::get('/group', 'GroupController@list');
+Route::get('/group/new', 'GroupController@new');
+Route::post('/group/new', 'GroupController@save');
+Route::get('/group/edit/{id?}', 'GroupController@edit');
+Route::post('/group/edit', 'GroupController@update');
+Route::post('/group/delete', 'GroupController@delete');
+
 Route::get('/employee', 'EmployeeController@list');
 Route::get('/employee/new', 'EmployeeController@new');
 Route::post('/employee/new', 'EmployeeController@save');
@@ -75,5 +82,14 @@ Route::post('/user/edit', 'UserController@update');
 Route::post('/user/delete', 'UserController@delete');
 Route::post('/user/change-password', 'UserController@changePassword');
 
-Route::get('/report/salary', 'ReportController@form');
-Route::post('/report/salary/export', 'ReportController@export');
+Route::get('/report/production', 'ReportController@formProduction');
+Route::get('/report/mandays', 'ReportController@formMandays');
+Route::get('/report/group', 'ReportController@formGroup');
+Route::get('/report/group/summary', 'ReportController@formGroupSummary');
+Route::get('/report/receh', 'ReportController@formReceh');
+Route::get('/report/salary', 'ReportController@formSalary');
+// Route::get('/report/salary', 'ReportController@form');
+// Route::get('/report/salary/group', 'ReportController@formGroup');
+// Route::get('/report/receh', 'ReportController@formCetakReceh');
+// Route::get('/report/receh', 'ReportController@formCetakReceh');
+// Route::post('/report/salary/export', 'ReportController@export');
