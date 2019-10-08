@@ -115,11 +115,11 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="pic" class="col-sm-2 control-label">Reporter <span class="text-red">*</span></label>
+                                <label for="pic" class="col-sm-2 control-label">Group <span class="text-red">*</span></label>
                                 <div class="col-sm-5">
-                                    <select id="employeeId" name="picId" class="form-control select-item" style="width: 100%">
-                                        @foreach($employees as $e)
-                                            <option value="{{ $e->id }}">{{ $e->nik . ' - ' . $e->name }}</option>
+                                    <select id="groupId" name="groupId" class="form-control select-item" style="width: 100%">
+                                        @foreach($groups as $g)
+                                            <option value="{{ $g->id }}">{{ $g->section . ' - ' . $g->name }}</option>
                                         @endforeach    
                                     </select>
                                 </div>

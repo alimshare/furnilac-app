@@ -44,6 +44,16 @@ class PO extends Model
         ]);
     }
 
+    /**
+    *   Return Group
+    */
+    public function group() {
+        return $this->belongsTo('\App\Model\Group', 'group_id', 'id')->withDefault([
+            'id' => '',
+            'name' => ''
+        ]);
+    }
+
 
     /**
     *   Return Detail PO

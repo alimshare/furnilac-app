@@ -173,7 +173,7 @@
                                         @foreach ($obj->productionReport as $report)
                                             <tr>
                                                 <td>{{ $report->reported_date }}</td>
-                                                <td>{{ $report->reporter->name }}</td>
+                                                <td>{{ $report->group->name }}</td>
                                                 <td>{{ $report->part_number }}</td>
                                                 <td>{{ $report->qty_output }}</td>
                                             </tr>

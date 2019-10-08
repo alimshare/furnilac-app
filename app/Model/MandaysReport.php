@@ -29,4 +29,14 @@ class MandaysReport extends Model
     // {
     // 	return $this->belongsTo('\App\Model\ProductionReport', 'production_report_id', 'id');
     // }
+
+    /**
+    *   Return Group
+    */
+    public function group() {
+        return $this->belongsTo('\App\Model\Group', 'group_id', 'id')->withDefault([
+            'id' => '',
+            'name' => ''
+        ]);
+    }
 }

@@ -99,11 +99,11 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="pic" class="col-sm-2 control-label">Reporter <span class="text-red">*</span></label>
+                                <label for="pic" class="col-sm-2 control-label">Group <span class="text-red">*</span></label>
                                 <div class="col-sm-5">
-                                    <select id="employeeId" name="picId" class="form-control select-item" style="width: 100%">
-                                        @foreach($employees as $e)
-                                            <option value="{{ $e->id }}">{{ $e->nik . ' - ' . $e->name }}</option>
+                                    <select id="groupId" name="groupId" class="form-control select-item" style="width: 100%">
+                                        @foreach($groups as $g)
+                                            <option value="{{ $g->id }}">{{ $g->section . ' - ' . $g->name }}</option>
                                         @endforeach    
                                     </select>
                                 </div>
@@ -162,7 +162,7 @@
                     <thead>
                         <tr>
                             <th>Report Date</th>
-                            <th>Reporter</th>
+                            <th>Group</th>
                             <th>Employee</th>
                             <th>Mandays</th>
                             <th></th>
@@ -172,7 +172,7 @@
                         @foreach($mandays as $o)
                         <tr>
                             <td>{{ $o->reported_date }}</td>
-                            <td>{{ $o->reporter->nik }} - {{ $o->reporter->name }}</td>
+                            <td>{{ $o->group->section }} - {{ $o->group->name }}</td>
                             <td>{{ $o->employee->nik }} - {{ $o->employee->name }}</td>
                             <td class="text-right">{{ $o->man_hour }}</td>
                             <td class="text-center">

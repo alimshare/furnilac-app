@@ -11,6 +11,7 @@ use App\Model\Item;
 use App\Model\Employee;
 use App\Model\Buyer;
 use App\Model\Part;
+use App\Model\Group;
 
 class POController extends Controller
 {
@@ -284,6 +285,7 @@ class POController extends Controller
 	public function production()
 	{
 		$this->data['employees'] = Employee::all();
+		$this->data['groups'] 	 = Group::all();
 		$this->data['pos'] 		 = PO::all();
 		return view($this->VIEW_PATH.'production', $this->data);
 	}
@@ -293,28 +295,31 @@ class POController extends Controller
 		// dd('coming soon');
 		// dd($req->all());
 		
-		$picId 		= $req->input('picId');
+		$groupId 	= $req->input('groupId');
 		$reportDate = $req->input('reportDate');
 		$outputList = $req->input('output');  // array
 
+
 		$records = array();
-		foreach ($outputList as $poNumber => $po) {
-			
-			foreach ($po as $partNumber => $output) {
+		if ($outputList != null)  {
+			foreach ($outputList as $poNumber => $po) {
 				
-				if ($output <= 0) continue; // skip unreported progess
+				foreach ($po as $partNumber => $output) {
+					
+					if ($output <= 0) continue; // skip unreported progess
 
-				$records[] = array(
-					'reported_date' => $reportDate,
-					'reported_by' 	=> $picId,
-					'po_number' 	=> $poNumber,
-					'part_number' 	=> $partNumber,
-					'qty_output' 	=> $output,
-					'created_at'	=> date('Y-m-d H:i:s')
-				);
+					$records[] = array(
+						'reported_date' => $reportDate,
+						'group_id' 		=> $groupId,
+						'po_number' 	=> $poNumber,
+						'part_number' 	=> $partNumber,
+						'qty_output' 	=> $output,
+						'created_at'	=> date('Y-m-d H:i:s')
+					);
 
+				}
+				
 			}
-			
 		}
 
 		// dd($records);
@@ -335,6 +340,7 @@ class POController extends Controller
 	public function mandays()
 	{
 		$this->data['employees'] = Employee::all();
+		$this->data['groups'] 	 = Group::all();
 		$this->data['pos'] 		 = PO::all();
 		$this->data['mandays']	 = \App\Model\MandaysReport::orderBy('reported_date', 'desc')->get();
 		return view($this->VIEW_PATH.'mandays', $this->data);
@@ -345,24 +351,26 @@ class POController extends Controller
 		// dd('coming soon');
 		// dd($req->all());
 
-		$picId 		= $req->input('picId'); // kepala regu
+		$groupId 	= $req->input('groupId');
 		$reportDate = $req->input('reportDate');
 		$shift 		= $req->input('shift');
 		$employees 	= $req->input('employees');
 
 		$manhourList = array();
-		foreach ($req->input('mh') as $idx => $mh) {
-			
-			if ($mh == 0) continue; // skip unreported progress
+		if ($req->input('mh') != null) {
+			foreach ($req->input('mh') as $idx => $mh) {
+				
+				if ($mh == 0) continue; // skip unreported progress
 
-			$manhourList[] = array(
-				'reported_date' => $reportDate,
-				'reported_by' 	=> $picId,
-				'employee_id' 	=> $employees[$idx],
-				'man_hour' 		=> $mh,
-				'shift' 		=> $shift,
-				'created_at'	=> date('Y-m-d H:i:s')
-			);
+				$manhourList[] = array(
+					'reported_date' => $reportDate,
+					'group_id' 		=> $groupId,
+					'employee_id' 	=> $employees[$idx],
+					'man_hour' 		=> $mh,
+					'shift' 		=> $shift,
+					'created_at'	=> date('Y-m-d H:i:s')
+				);
+			}	
 		}
 		// dd($manhourList);
 

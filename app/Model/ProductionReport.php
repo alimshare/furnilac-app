@@ -17,4 +17,14 @@ class ProductionReport extends Model
     public function reporter() {
         return $this->belongsTo('\App\Model\Employee', 'reported_by', 'id');
     }
+
+    /**
+    *   Return Group
+    */
+    public function group() {
+        return $this->belongsTo('\App\Model\Group', 'group_id', 'id')->withDefault([
+            'id' => '',
+            'name' => ''
+        ]);
+    }
 }
