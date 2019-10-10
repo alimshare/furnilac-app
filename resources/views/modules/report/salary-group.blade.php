@@ -18,11 +18,11 @@
 @section('content')
 
     <section class="content-header">
-        <h1>Salary Report <small></small></h1>
+        <h1>Group Salary Report <small></small></h1>
         <ol class="breadcrumb">
             <li><a href="/#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
             <li>Report</li>
-            <li class="active">Salary Report</li>
+            <li class="active">Group Salary Report</li>
         </ol>
     </section>
 
@@ -33,14 +33,14 @@
                     <div class="box">
                         <div class="box-body">
                             @csrf
-                            <!-- <div class="form-group">
-                                <label>Reporter</label>
-                                <select id="reporterId" name="reporterId" class="form-control select-item" style="width: 100%" required="">
-                                    @foreach($employees as $e)
-                                        <option value="{{ $e->id }}">{{ $e->nik . ' - ' . $e->name }}</option>
+                            <div class="form-group">
+                                <label>Group</label>
+                                <select id="groupId" name="groupId" class="form-control select-item" style="width: 100%" required="">
+                                    @foreach($groups as $g)
+                                        <option value="{{ $g->id }}">{{ $g->name }}</option>
                                     @endforeach    
                                 </select>
-                            </div> -->
+                            </div>
                             <div class="form-group">
                                 <label>Period</label>
                                 <div class="row">

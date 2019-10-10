@@ -83,11 +83,18 @@ Route::post('/user/delete', 'UserController@delete');
 Route::post('/user/change-password', 'UserController@changePassword');
 
 Route::get('/report/production', 'ReportController@formProduction');
+Route::post('/report/production', 'ReportController@formProductionExport');
 Route::get('/report/mandays', 'ReportController@formMandays');
+Route::post('/report/mandays', 'ReportController@formMandaysExport');
 Route::get('/report/group', 'ReportController@formGroup');
+Route::post('/report/group', 'ReportController@formGroupExport');
 Route::get('/report/group/summary', 'ReportController@formGroupSummary');
+Route::post('/report/group/summary', 'ReportController@formGroupSummaryExport');
 Route::get('/report/receh', 'ReportController@formReceh');
+Route::post('/report/receh', 'ReportController@formRecehExport');
 Route::get('/report/salary', 'ReportController@formSalary');
+Route::post('/report/salary', 'ReportController@formSalaryExport');
+
 // Route::get('/report/salary', 'ReportController@form');
 // Route::get('/report/salary/group', 'ReportController@formGroup');
 // Route::get('/report/receh', 'ReportController@formCetakReceh');

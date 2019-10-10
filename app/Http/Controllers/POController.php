@@ -285,7 +285,7 @@ class POController extends Controller
 	public function production()
 	{
 		$this->data['employees'] = Employee::all();
-		$this->data['groups'] 	 = Group::all();
+		$this->data['groups'] 	 = Group::orderBy('section','asc')->orderBy('name','asc')->get();
 		$this->data['pos'] 		 = PO::all();
 		return view($this->VIEW_PATH.'production', $this->data);
 	}
@@ -340,7 +340,7 @@ class POController extends Controller
 	public function mandays()
 	{
 		$this->data['employees'] = Employee::all();
-		$this->data['groups'] 	 = Group::all();
+		$this->data['groups'] 	 = Group::orderBy('section','asc')->orderBy('name','asc')->get();
 		$this->data['pos'] 		 = PO::all();
 		$this->data['mandays']	 = \App\Model\MandaysReport::orderBy('reported_date', 'desc')->get();
 		return view($this->VIEW_PATH.'mandays', $this->data);
@@ -348,7 +348,6 @@ class POController extends Controller
 
 	public function mandaysSave(Request $req)
 	{
-		// dd('coming soon');
 		// dd($req->all());
 
 		$groupId 	= $req->input('groupId');

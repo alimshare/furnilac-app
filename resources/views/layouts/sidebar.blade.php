@@ -53,7 +53,7 @@
         <li><a href="/report/production"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Production Report</span></a></li>
         <li><a href="/report/mandays"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Mandays Report</span></a></li>
         <li><a href="/report/group"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Group Salary Report</span></a></li>
-        <li><a href="/report/group/summary"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Summary Group Salary</span></a></li>
+        <li><a href="/report/group/summary"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Summary Group Salary Report</span></a></li>
         <li><a href="/report/receh"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Receh Report</span></a></li>
         <li><a href="/report/salary"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Summary Salary Report</span></a></li>
         
