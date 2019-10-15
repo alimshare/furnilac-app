@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('header-script')
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 <link rel="stylesheet" href="/bower_components/select2/dist/css/select2.min.css">
 <style type="text/css">
 .select2-container--default .select2-selection--single {
@@ -16,10 +17,19 @@
 @endsection
 
 @section('footer-script')
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="/bower_components/select2/dist/js/select2.full.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 <script type="text/javascript">
+
     $(function(){
         $('.select-item').select2();
+
+        $('.dt').DataTable({
+            "columnDefs": [
+            ]
+        });
     });
 
     function setMax(elem, max) {
@@ -99,11 +109,21 @@
 
     <section class="content container-fluid">      
         <div class="row">
+
+
             <div class="col-xs-12">
+                <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#tab_1" data-toggle="tab">Form</a></li>
+              <li><a href="#tab_2" data-toggle="tab">History</a></li>
+            </ul>
+
+            <div class="tab-content">
+              <div class="tab-pane active" id="tab_1">
                 <form class="form-horizontal" action="/po/production/save" method="POST">
-                    <div class="box">
+                    <div class="box box-success box-solid">
                         <div class="box-header with-border">
-                            <h3 class="box-title"><i class="fas fa-clipboard-list"></i> &nbsp;Production Report</h3>
+                            <!-- <h3 class="box-title"><i class="fas fa-clipboard-list"></i> &nbsp;Production Report</h3> -->
                         </div>
                         <div class="box-body">
                             @csrf
@@ -175,6 +195,36 @@
                         </div>
                     </div>
                 </form>
+              </div>
+              <div class="tab-pane" id="tab_2">
+                <table class="table table-bordered table-striped dt">
+                    <thead>
+                        <tr>
+                            <th>Report Date</th>
+                            <th>Group</th>
+                            <th>PO Number</th>
+                            <th>Part Number</th>
+                            <th>Qty Output</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($productions as $o)
+                        <tr>
+                            <td>{{ $o->reported_date }}</td>
+                            <td>{{ $o->group->section }} - {{ $o->group->name }}</td>
+                            <td>{{ $o->po_number }} </td>
+                            <td>{{ $o->part_number }} </td>
+                            <td class="text-right">{{ $o->qty_output }}</td>
+                            <td class="text-center">
+                                <a href="javascript:void(0)"><i class="fa fa-times text-red" title="cancel"></i></a>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>                
+              </div>
+            </div>
 
             </div>
         </div>

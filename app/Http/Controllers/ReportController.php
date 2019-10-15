@@ -107,18 +107,18 @@ class ReportController extends Controller
 			->whereBetween('production_report.reported_date', [$startDate, $endDate])
 			->sum(DB::raw('production_report.qty_output * part.price'));
 
-		echo $totalPrice;
-		echo "<br>";
+		// echo $totalPrice;
+		// echo "<br>";
 
 		$totalManhour = DB::table('mandays_report')
 			->where('mandays_report.group_id', $groupId)
 			->whereBetween('mandays_report.reported_date', [$startDate, $endDate])
 			->sum('mandays_report.man_hour');
 
-		echo $totalManhour;
-		echo "<br>";
-		echo $totalPrice / $totalManhour;
-		echo "<br>";
+		// echo $totalManhour;
+		// echo "<br>";
+		// echo $totalPrice / $totalManhour;
+		// echo "<br>";
 		
 		$sql = "SELECT reported_date, 
 			employee_id, e.nik employee_nik, e.name employee_name, man_hour, shift, 

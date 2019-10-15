@@ -284,9 +284,10 @@ class POController extends Controller
 
 	public function production()
 	{
-		$this->data['employees'] = Employee::all();
-		$this->data['groups'] 	 = Group::orderBy('section','asc')->orderBy('name','asc')->get();
-		$this->data['pos'] 		 = PO::all();
+		$this->data['employees'] 	= Employee::all();
+		$this->data['groups'] 	 	= Group::orderBy('section','asc')->orderBy('name','asc')->get();
+		$this->data['pos'] 		 	= PO::all();
+		$this->data['productions'] 	= \App\Model\ProductionReport::orderBy('reported_date', 'desc')->get();
 		return view($this->VIEW_PATH.'production', $this->data);
 	}
 
