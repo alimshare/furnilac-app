@@ -99,6 +99,18 @@
                                                         @endforeach    
                                                     </select>
                                                 </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="pic" class="col-sm-4 control-label">Status</label>
+                                                <div class="col-sm-8">
+                                                    <select id="status" name="status" class="form-control" style="width: 100%">
+                                                        <option value="WAIT"    {{ $po->status == 'WAIT' ? 'selected' : '' }}>Waiting List</option>
+                                                        <option value="PROCESS" {{ $po->status == 'PROCESS' ? 'selected' : '' }}>Proceed</option>
+                                                        <option value="DONE"    {{ $po->status == 'DONE' ? 'selected' : '' }}>Done</option>
+                                                        <option value="CLOSED"  {{ $po->status == 'CLOSED' ? 'selected' : '' }}>Closed</option>
+                                                        <option value="CANCELED" {{ $po->status == 'CANCELED' ? 'selected' : '' }}>Canceled</option>
+                                                    </select>
+                                                </div>
                                             </div>                                       
                                         </div>
                                     </div>                                    

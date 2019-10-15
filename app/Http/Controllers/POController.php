@@ -58,6 +58,7 @@ class POController extends Controller
 		$obj->sw_begin 			= $request->input('startDate');
 		$obj->sw_end 			= $request->input('endDate');
 		$obj->notice_date		= $request->input('noticeDate');
+		$obj->status			= 'WAIT';
 
 
 		$itemList  = $request->input('itemCode');
@@ -145,38 +146,41 @@ class POController extends Controller
 		$po->sw_end 	 = $req->input('endDate');
 		$po->notice_date = $req->input('noticeDate');
 		$po->transaction_date = $req->input('transactionDate');
+		$po->status	 	 = $req->input('status');
 
 		DB::beginTransaction();
 
 		/* Existing Item */
 		$itemList = $req->input('item');
-		foreach ($itemList  as $itemCode => $data) {
+		if ($itemList != null && count($itemList) > 0) {			
+			foreach ($itemList  as $itemCode => $data) {
 
-			$temp = $po->prices()->where('item_code', $itemCode)->first();
-			$currentPrice = str_replace(".", "", $data['price']);
-			$currentQty = $data['qty'];
+				$temp = $po->prices()->where('item_code', $itemCode)->first();
+				$currentPrice = str_replace(".", "", $data['price']);
+				$currentQty = $data['qty'];
 
-			if ($temp->selling_price != $currentPrice){
-				$temp->selling_price = $currentPrice;
-			}
-
-			$isChangeQty = false;
-			if ($temp->qty != $currentQty){
-				$temp->qty = $currentQty;
-				$isChangeQty = true;
-			}
-
-			if ($isChangeQty){
-				$detailPO = $po->detail()->where('item_code', $itemCode)->get();
-				foreach ($detailPO as $key => $detail) {
-					$detail->qty = $currentQty;
-					$detail->save(); // update qty in each part
+				if ($temp->selling_price != $currentPrice){
+					$temp->selling_price = $currentPrice;
 				}
+
+				$isChangeQty = false;
+				if ($temp->qty != $currentQty){
+					$temp->qty = $currentQty;
+					$isChangeQty = true;
+				}
+
+				if ($isChangeQty){
+					$detailPO = $po->detail()->where('item_code', $itemCode)->get();
+					foreach ($detailPO as $key => $detail) {
+						$detail->qty = $currentQty;
+						$detail->save(); // update qty in each part
+					}
+				}
+
+				$temp->save(); // update existing po_price by item_code
+
 			}
-
-			$temp->save(); // update existing po_price by item_code
-
-		}
+		} 
 
 		/* New Item */
 		$newItems 	= $req->input('newItem');
@@ -286,7 +290,7 @@ class POController extends Controller
 	{
 		$this->data['employees'] 	= Employee::all();
 		$this->data['groups'] 	 	= Group::orderBy('section','asc')->orderBy('name','asc')->get();
-		$this->data['pos'] 		 	= PO::all();
+		$this->data['pos'] 		 	= PO::whereNotIn('status', array('CANCELED','CLOSED','DONE'))->get();
 		$this->data['productions'] 	= \App\Model\ProductionReport::orderBy('reported_date', 'desc')->get();
 		return view($this->VIEW_PATH.'production', $this->data);
 	}
@@ -342,7 +346,7 @@ class POController extends Controller
 	{
 		$this->data['employees'] = Employee::all();
 		$this->data['groups'] 	 = Group::orderBy('section','asc')->orderBy('name','asc')->get();
-		$this->data['pos'] 		 = PO::all();
+		$this->data['pos'] 		 = PO::whereNotIn('status', array('CANCELED','CLOSED','DONE'))->get();
 		$this->data['mandays']	 = \App\Model\MandaysReport::orderBy('reported_date', 'desc')->get();
 		return view($this->VIEW_PATH.'mandays', $this->data);
 	}

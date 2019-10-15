@@ -11,8 +11,8 @@
     <script type="text/javascript">
         $('.dt').DataTable({
             "columnDefs": [
-                { "orderable": false,  "targets": 4 },
-                { "searchable": false,  "targets": 4 },
+                { "orderable": false,  "targets": 5 },
+                { "searchable": false,  "targets": 5 },
             ]
         });     
 
@@ -57,6 +57,7 @@
                                         <th>PO Number</th>
                                         <th>Buyer</th>
                                         <th>PIC</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -67,10 +68,11 @@
                                             <td>{{ $o->po_number }}</td>
                                             <td>{{ $o->buyer->name }}</td>
                                             <td>{{ $o->pic->nik . ' - ' .$o->pic->name }}</td>
+                                            <td>{{ $o->status }}</td>
                                             <td>
-                                                <a href="/po/monitor/{{ base64_encode($o->po_number) }}" class="btn btn-info btn-flat">View</a>
-                                                <a href="/po/edit/{{ base64_encode($o->po_number) }}" class="btn btn-primary btn-flat">Edit</a>
-                                                <a href="#" class="btn btn-danger btn-flat" onclick="confirmDelete(`{{ $o->po_number }}`)">Delete</a>
+                                                <a href="/po/monitor/{{ base64_encode($o->po_number) }}" class="btn btn-info btn-flat"><i class="fa fa-search"></i> View</a>
+                                                <a href="/po/edit/{{ base64_encode($o->po_number) }}" class="btn btn-primary btn-flat"><i class="fa fa-pencil"></i> Edit</a>
+                                                <a href="#" class="btn btn-danger btn-flat" onclick="confirmDelete(`{{ $o->po_number }}`)"><i class="fa fa-times"></i> Cancel</a>
                                                 <!-- <a href="/po/production/{{ $o->po_number }}" class="btn btn-default btn-flat">Production</a> -->
                                             </td>
                                         </tr>
