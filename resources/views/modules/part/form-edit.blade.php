@@ -41,10 +41,14 @@
                                 <label for="nik" class="col-sm-4 control-label">Price</label>
                                 <div class="col-sm-8"><input type="text" class="form-control" id="price" placeholder="Price" name="price" required="" value="{{ $object->price }}"></div>
                             </div>
+                            <div class="form-group">
+                                <label for="price_active_period" class="col-sm-4 control-label">Active Period</label>
+                                <div class="col-sm-8"><input type="date" class="form-control" id="price_active_period" placeholder="Active Period" name="price_active_period" required="" value="{{ $object->price_active_period }}"></div>
+                            </div>
                         </div>
                         <div class="box-footer text-right">
                             <button type="submit" class="btn btn-flat btn-success">Update</button>
-                            <a href="#" onclick="history.back()" class="btn btn-flat btn-default">Cancel</a>
+                            <a href="/item/{{ $item_id }}" class="btn btn-flat btn-default">Cancel</a>
                         </div>
                     </div>
                 </form>

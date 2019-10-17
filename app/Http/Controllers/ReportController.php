@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 use App\Exports\GeneralExport;
+use App\Exports\GeneralViewExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
@@ -135,13 +136,50 @@ class ReportController extends Controller
 			$value->price_per_hour = ($totalPrice / $totalManhour);
 			$value->salary = $value->price_per_hour * $value->man_hour;
 		}
-
 		// dd($data);
 		
-		$heading = array_keys(json_decode(json_encode($data[0]), true));
-		return Excel::download(new GeneralExport($heading, $data), 'group-export-'.(date('YmdHis')).'.xlsx');
+		$dateList = array();
+    	$currentDate = $startDate;
+		while (strtotime($currentDate) <= strtotime($endDate)) {
+		    $dateList[] = $currentDate;
+		    $currentDate = date ("Y-m-d", strtotime("+1 day", strtotime($currentDate)));
+		}
 
-		// $total = $data
+		$export = array();
+		foreach ($data as $k1 => $v1) {
+			$row = array();
+			$row['NIK'] 	= $v1->employee_nik;
+			$row['Name'] 	= $v1->employee_name;
+			
+			$totalGaji = 0;
+			foreach ($dateList as $k2 => $v2) {
+				if ($v2 == $v1->reported_date) {
+					$row['dateList'][$v2]['jam'] 	= $v1->man_hour;
+					$row['dateList'][$v2]['gaji'] 	= $v1->salary;
+					$totalGaji = $totalGaji + $v1->salary;
+				} else {
+					$row['dateList'][$v2]['jam'] 	= 0;
+					$row['dateList'][$v2]['gaji'] 	= 0;
+				}
+			}
+
+			$row['total'] = $totalGaji;
+
+			$export[] = $row; 
+		}
+
+		$group = \App\Model\Group::find($groupId);
+
+		$x['bagian'] 	= $group->section;
+		$x['group'] 	= $group->name;
+		$x['startDate'] = $startDate;
+		$x['endDate'] 	= $endDate;
+		$x['dateList']	= $dateList;
+		$x['data']		= $export;
+		// dd($x);
+		// return view('export.laporan_rekap_upah_borongan', $x);
+		return Excel::download(new GeneralViewExport('export.laporan_rekap_upah_borongan', $x), 'group-export-'.(date('YmdHis')).'.xlsx');
+
 	}
 
 	public function formGroupSummary(Request $request)
@@ -227,7 +265,7 @@ class ReportController extends Controller
 			$data[] = $row;
 		}
 
-		// dd($data);
+		dd($data);
 		$heading = array_keys(json_decode(json_encode($data[0]), true));
 		return Excel::download(new GeneralExport($heading, $data), 'receh-export-'.(date('YmdHis')).'.xlsx');
 

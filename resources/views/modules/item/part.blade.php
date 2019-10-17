@@ -60,6 +60,7 @@
                                         <th>Part Name</th>
                                         <th>Qty</th>
                                         <th>Price</th>
+                                        <th>Active Period</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -71,9 +72,11 @@
                                             <td>{{ $o->part_name }}</td>
                                             <td>{{ $o->qty }}</td>
                                             <td class="text-right">{{ number_format($o->price,0,',','. ') }}</td>
+                                            <td>{{ $o->price_active_period }}</td>
                                             <td class="text-left">
-                                                <a href="/item/{{ $list->item_id }}/edit/{{ $o->id }}" class="btn btn-primary btn-flat">Edit</a>
-                                                <a href="#" class="btn btn-danger btn-flat" onclick="confirmDelete(`{{ $list->item_id }}`,`{{ $o->part_number }}`)">Delete</a>
+                                                <a href="/item/{{ $list->item_id }}/edit/{{ $o->id }}" class="btn btn-primary btn-flat"><i class="fa fa-pencil"></i> &nbsp;Edit</a>
+                                                <a href="#" class="btn btn-danger btn-flat" onclick="confirmDelete(`{{ $list->item_id }}`,`{{ $o->part_number }}`)"><i class="fa fa-trash"></i> &nbsp;Delete</a>
+                                                <a href="#" class="btn btn-default btn-flat"> <i class="fa fa-money"></i> &nbsp;Price History</a>
                                             </td>
                                         </tr>
                                     @endforeach

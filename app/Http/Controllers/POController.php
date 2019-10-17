@@ -313,11 +313,14 @@ class POController extends Controller
 					
 					if ($output <= 0) continue; // skip unreported progess
 
+					$part = Part::where('part_number', $partNumber)->first();
+
 					$records[] = array(
 						'reported_date' => $reportDate,
 						'group_id' 		=> $groupId,
 						'po_number' 	=> $poNumber,
 						'part_number' 	=> $partNumber,
+						'part_price' 	=> $part->price,
 						'qty_output' 	=> $output,
 						'created_at'	=> date('Y-m-d H:i:s')
 					);
