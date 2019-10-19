@@ -41,8 +41,8 @@
 					<td>{{ $v['jam'] }}</td>
 					<td>{{ $v['gaji'] }}</td>
 				@endforeach
-				<td>{{ $o['total'] }}</td>
-				<?php $grandTotal = $grandTotal + $o['total']; ?>
+				<td>{{ $totalGaji = array_sum(array_column($o['dateList'], 'gaji')) }}</td>
+				<?php $grandTotal = $grandTotal + $totalGaji; ?>
 			</tr>
 			@endforeach
 		</tbody>

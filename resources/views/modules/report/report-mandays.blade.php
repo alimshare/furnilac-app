@@ -56,8 +56,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="box-footer text-center">
-                            <button type="submit" class="btn btn-flat btn-success">Export</button>
+                        <div class="box-footer text-left">
+                            <button type="submit" class="btn btn-flat btn-primary" name="view" value="1">View</button>
+                            <button type="submit" class="btn btn-flat btn-success" name="exportExcel" value="1">Export</button>
                             <a href="#" onclick="history.back()" class="btn btn-flat btn-default">Cancel</a>
                         </div>
                     </div>
