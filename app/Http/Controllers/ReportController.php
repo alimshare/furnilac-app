@@ -256,11 +256,9 @@ class ReportController extends Controller
 					$salary = $price_per_hour * $v1->man_hour;
 
 					$row['dateList'][$k2]['jam'] 	= $v1->man_hour;
-					$row['dateList'][$k2]['gaji'] 	= $salary;//$v1->salary;
+					$row['dateList'][$k2]['gaji'] 	= $salary;
 				}
 			}
-
-			$row['total'] = 0;//$totalGaji;	
 
 			$export[$v1->employee_nik] = $row; 
 		}
@@ -276,12 +274,8 @@ class ReportController extends Controller
 		$x['dateList']	= $dateList;
 		$x['data']		= $export;
 
-		// echo "<pre>";
-		// print_r($export);
-		// dd($export);
-		// die();
-		return view('export.laporan_rekap_upah_borongan', $x);
-		// return Excel::download(new GeneralViewExport('export.laporan_rekap_upah_borongan', $x), 'group-export-'.(date('YmdHis')).'.xlsx');
+		// return view('export.laporan_rekap_upah_borongan', $x);
+		return Excel::download(new GeneralViewExport('export.laporan_rekap_upah_borongan', $x), 'group-export-'.(date('YmdHis')).'.xlsx');
 
 	}
 
