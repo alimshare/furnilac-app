@@ -88,24 +88,14 @@ class ReportController extends Controller
 			$value->detail = $row;
 		}
 
-		// dd(array_sum(array_column(array_column($data, 'detail'), '20191010qty')));
-
-		// $this->data['group']  	 = 'group';
-		// $this->data['bagian'] 	 = 'bagian';
-		// $this->data['startDate'] = $startDate;
-		// $this->data['endDate'] 	 = $endDate;
-		// $this->data['data']	  	 = $data;
-		// $this->data['dateList']	 = $dateList;
-		// $this->data['detail'] 	 = $detail;
-		// return view('export.laporan_produksi', $this->data);
-
 		if ($exportType == "view") {
 			$this->data['groups'] = \App\Model\Group::all();
 			$this->data['data']	  = $data;
 			return view('modules.report.report-production', $this->data);
 		} else {
-			$this->data['group']  	 = 'group';
-			$this->data['bagian'] 	 = 'bagian';
+			$group = \App\Model\Group::find($groupId);
+			$this->data['group']  	 = $group->name;
+			$this->data['bagian'] 	 = $group->section;
 			$this->data['startDate'] = $startDate;
 			$this->data['endDate'] 	 = $endDate;
 			$this->data['data']	  	 = $data;

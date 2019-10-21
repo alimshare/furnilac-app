@@ -26,7 +26,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<?php $totals = array(); $grandTotal = 0; ?>
+			<?php $totals = array(); $grandTotal = 0; $countDailyEmployee = array(); ?>
 			@foreach($data as $o)
 			<tr>
 				<td>{{ $o['NIK'] }}</td>
@@ -36,6 +36,14 @@
 						
 						$totals[$k.'jam']  = (array_key_exists($k.'jam', $totals)) ? $totals[$k.'jam'] + $v['jam'] : $v['jam']; 
 						$totals[$k.'gaji'] = (array_key_exists($k.'gaji', $totals)) ? $totals[$k.'gaji'] + $v['gaji'] : $v['gaji'];
+
+						if (!array_key_exists($k, $countDailyEmployee)) {
+							$countDailyEmployee[$k] = 0;
+						}
+
+						if ($v['jam'] > 0) {
+							$countDailyEmployee[$k]++;	
+						} 
 
 					?>
 					<td>{{ $v['jam'] }}</td>
@@ -53,6 +61,20 @@
 					<td>{{ $total }}</td>
 				@endforeach
 				<td>{{ $grandTotal }}</td>
+			</tr>
+			<tr>
+				<td colspan="2">Jumlah Karyawan</td>
+				@foreach ($countDailyEmployee  as $key => $o)
+					<td colspan="2" style="text-align: right;">{{ $o }}</td>
+				@endforeach
+				<td></td>
+			</tr>
+			<tr>
+				<td colspan="2">Gaji Per Jam</td>
+				@foreach (array_column($data, 'dateList')[0]  as $key => $o)
+					<td colspan="2" style="text-align: right;">{{ ($o['totalManHour'] == 0) ? 0 : $o['totalGaji'] / $o['totalManHour'] }}</td>
+				@endforeach
+				<td></td>
 			</tr>
 		</tfoot>
 	</table>
