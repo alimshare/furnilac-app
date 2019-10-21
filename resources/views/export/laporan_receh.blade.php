@@ -14,13 +14,13 @@
 				<th>Nama Group</th>
 				<th>Gaji</th>
 				<th>Jumlah Orang</th>
-				<th>100K</th>
-				<th>50K</th>
-				<th>20K</th>
-				<th>10K</th>
-				<th>5K</th>
-				<th>2K</th>
-				<th>1K</th>
+				<th>100.000</th>
+				<th>50.000</th>
+				<th>20.000</th>
+				<th>10.000</th>
+				<th>5.000</th>
+				<th>2.000</th>
+				<th>1.000</th>
 				<th>500</th>
 				<th>200</th>
 				<th>100</th>

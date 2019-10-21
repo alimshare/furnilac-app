@@ -276,31 +276,11 @@ class ReportController extends Controller
 
 	public function formGroupSummaryExport(Request $request)
 	{
-		// return view('modules.report.report-group-summary', $this->data);
 		$startDate 	= $request->input('startDate');
 		$endDate 	= $request->input('endDate');
-		
-		// $sql = "SELECT pr.reported_date, pr.group_id, g.name, sum(pr.qty_output * part.price) total
-		// 		FROM production_report pr 
-		// 			INNER JOIN part ON part.part_number = pr.part_number
-		// 			INNER JOIN tblgroups g ON g.id = pr.group_id
-		// 		WHERE pr.reported_date BETWEEN ? AND ? 
-		// 		GROUP BY pr.reported_date, pr.group_id, g.name
-		// 		";
-
-		// $data = DB::select($sql, [$startDate, $endDate]);
-
-		// foreach ($data as $key => $value) {
-		// 	$value->price_per_hour = ($totalPrice / $totalManhour);
-		// 	$value->salary = $value->price_per_hour * $value->man_hour;
-		// }
-
-		// dd($data);
-		// $heading = array_keys(json_decode(json_encode($data[0]), true));
-		// return Excel::download(new GeneralExport($heading, $data), 'group-summary-export-'.(date('YmdHis')).'.xlsx');
 
 
-		$sql = "SELECT t1.*, g.name group_name, g.section bagian, count(mr.employee_id) jumlah_karyawan
+		$sql = "SELECT t1.*, g.name group_name, g.section bagian, count(distinct(mr.employee_id)) jumlah_karyawan
 				FROM (
 					SELECT pr.group_id, sum(pr.qty_output * part.price) total
 					FROM production_report pr 
@@ -368,7 +348,7 @@ class ReportController extends Controller
 		// 			INNER JOIN mandays_report mr ON mr.reported_date = t1.reported_date AND mr.group_id = t1.group_id
 		// 			INNER JOIN employee e ON e.id = mr.employee_id
 		// 			INNER JOIN tblgroups g ON g.id = mr.group_id ";
-		$sql = "SELECT t1.*, g.name group_name, g.section bagian, count(mr.employee_id) jumlah_karyawan
+		$sql = "SELECT t1.*, g.name group_name, g.section bagian, count(distinct(mr.employee_id)) jumlah_karyawan
 				FROM (
 					SELECT pr.group_id, sum(pr.qty_output * part.price) total
 					FROM production_report pr 
@@ -413,7 +393,7 @@ class ReportController extends Controller
 		$x['startDate'] = $startDate;
 		$x['endDate'] 	= $endDate;
 		$x['data'] 		= $data;
-		// dd($x);
+		// dd($data);
 		// return view('export.laporan_receh', $x);
 		return Excel::download(new GeneralViewExport('export.laporan_receh', $x), 'receh-export-'.(date('YmdHis')).'.xlsx');
 
