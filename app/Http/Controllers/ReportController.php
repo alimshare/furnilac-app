@@ -423,7 +423,7 @@ class ReportController extends Controller
 		$endDate 	= $request->input('endDate');
 
 		
-		$sql = "SELECT t.employee_nik, t.employee_name, t.employee_rekening, t.group_name, sum(t.gaji) as salary
+		$sql = "SELECT t.employee_nik, t.employee_name, t.employee_rekening, sum(t.gaji) as salary
 				FROM (
 					SELECT mr.reported_date, 
 					employee_id, e.nik employee_nik, e.name employee_name, e.rekening employee_rekening,  man_hour, shift, 
@@ -450,7 +450,7 @@ class ReportController extends Controller
 					WHERE mr.reported_date BETWEEN ? AND ? 
 					ORDER BY mr.reported_date, mr.group_id ASC
 				) t 
-				GROUP BY employee_nik, employee_name, employee_rekening, group_name";
+				GROUP BY employee_nik, employee_name, employee_rekening";
 
 		$data = DB::select($sql, [$startDate, $endDate,$startDate, $endDate,$startDate, $endDate]);
 
@@ -464,7 +464,6 @@ class ReportController extends Controller
 			$row['Total Gaji']  = $value->salary;
 			$row['Tanggal Debet'] = $endDate;
 			$row['Keterangan'] = "GAJI PT. FURNILAC PRIMAGUNA";
-			$row['Nama Group'] = $value->group_name;
 			$export[] = $row;
 		}
 
