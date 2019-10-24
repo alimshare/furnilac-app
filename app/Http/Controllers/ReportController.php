@@ -327,48 +327,108 @@ class ReportController extends Controller
 		$startDate 	= $request->input('startDate');
 		$endDate 	= $request->input('endDate');
 
-		$sql = "SELECT t1.*, g.name group_name, g.section bagian, count(distinct(mr.employee_id)) jumlah_karyawan
+		// $sql = "SELECT t1.*, g.name group_name, g.section bagian, count(distinct(mr.employee_id)) jumlah_karyawan
+		// 		FROM (
+		// 			SELECT pr.group_id, sum(pr.qty_output * part.price) total
+		// 			FROM production_report pr 
+		// 				INNER JOIN part ON part.part_number = pr.part_number
+		// 				INNER JOIN tblgroups g ON g.id = pr.group_id
+		// 			WHERE pr.reported_date BETWEEN ? AND ?
+		// 			GROUP BY group_id
+		// 		) t1 
+		// 		INNER JOIN 
+		// 		(
+		// 			SELECT group_id, sum(man_hour) total_mh
+		// 			FROM mandays_report mr
+		// 			WHERE mr.reported_date BETWEEN ? AND ?
+		// 			GROUP BY group_id
+		// 		) t2 on t1.group_id = t2.group_id
+		// 		INNER JOIN mandays_report mr ON mr.group_id = t1.group_id
+		// 		INNER JOIN tblgroups g ON g.id = mr.group_id
+		// 		GROUP BY group_id, total, g.name, g.section;
+		// ";
+
+		$sql = "SELECT group_id, group_name, bagian, employee_id, sum(t.gaji) as salary 
 				FROM (
-					SELECT pr.group_id, sum(pr.qty_output * part.price) total
-					FROM production_report pr 
-						INNER JOIN part ON part.part_number = pr.part_number
-						INNER JOIN tblgroups g ON g.id = pr.group_id
-					WHERE pr.reported_date BETWEEN ? AND ?
-					GROUP BY group_id
-				) t1 
-				INNER JOIN 
-				(
-					SELECT group_id, sum(man_hour) total_mh
+					SELECT mr.reported_date, man_hour, shift, 
+					mr.group_id, g.name group_name, g.section bagian, employee_id,
+					t_sum_salary.total_gaji_group, t_sum_manhour.total_manhour_group, 
+					(t_sum_salary.total_gaji_group / t_sum_manhour.total_manhour_group) * man_hour as gaji
 					FROM mandays_report mr
+					LEFT JOIN tblgroups g ON mr.group_id=g.id
+					LEFT JOIN (
+						SELECT pr.reported_date, pr.group_id, SUM(pr.qty_output * part.price) total_gaji_group
+						FROM production_report pr
+						INNER JOIN part ON part.part_number = pr.part_number
+						INNER JOIN tblgroups g2 ON g2.id = pr.group_id
+						WHERE pr.reported_date BETWEEN ? AND ?
+						GROUP BY pr.reported_date, pr.group_id
+					) t_sum_salary 
+						ON t_sum_salary.reported_date = mr.reported_date AND t_sum_salary.group_id = mr.group_id
+					LEFT JOIN (
+						SELECT mr0.reported_date, mr0.group_id, SUM(mr0.man_hour) total_manhour_group
+						FROM mandays_report mr0
+						WHERE mr0.reported_date BETWEEN ? AND ?
+						GROUP BY mr0.reported_date, mr0.group_id
+					) t_sum_manhour 
+						ON t_sum_manhour.reported_date = mr.reported_date AND t_sum_manhour.group_id = mr.group_id
 					WHERE mr.reported_date BETWEEN ? AND ?
-					GROUP BY group_id
-				) t2 on t1.group_id = t2.group_id
-				INNER JOIN mandays_report mr ON mr.group_id = t1.group_id
-				INNER JOIN tblgroups g ON g.id = mr.group_id
-				GROUP BY group_id, total, g.name, g.section;
-		";
+					ORDER BY mr.reported_date, mr.group_id ASC
+				) t 
+				group by group_id, group_name, bagian, employee_id";
 		
-		$result = DB::select($sql, [$startDate, $endDate, $startDate, $endDate]);
+		$result = DB::select($sql, [$startDate, $endDate, $startDate, $endDate, $startDate, $endDate]);
 
 		foreach ($result as $key => $value) {
-			$value->receh = $this->receh($value->total);
+			$value->receh = $this->receh($value->salary);
 		}
 
+		// dd($result);
+
 		foreach ($result as $key => $value) {
+			$row["group_id"]			= $value->group_id;
 			$row["bagian"] 				= $value->bagian;
 			$row["group_name"]			= $value->group_name;
-			$row["jumlah_karyawan"] 	= $value->jumlah_karyawan;
-			$row["gaji"] 				= $value->total;
+			$row["karyawan"] 			= $value->employee_id;
+			$row["gaji"] 				= $value->salary;
 			foreach ($value->receh as $pecahan => $receh) {
 				$row[$pecahan] = $receh;
 			}
 			$data[] = $row;
 		}
-
 		// dd($data);
+
+		$groupByGroupId = array();
+		foreach ($data as $key => $value) {
+			$groupByGroupId[$value['group_id']][] = $value;
+		}
+
+		$finalOutput = array();
+		foreach ($groupByGroupId as $key => $value) {
+			$row['group_id'] 	= $value[0]['group_id'];
+			$row['group_name'] 	= $value[0]['group_name'];
+			$row['bagian'] 		= $value[0]['bagian'];
+			$row['jumlah_karyawan'] = count($value);
+			$row['gaji'] 		= array_sum(array_column($value, 'gaji'));
+			$row['100K'] 		= array_sum(array_column($value, '100K'));
+			$row['50K'] 		= array_sum(array_column($value, '50K'));
+			$row['20K'] 		= array_sum(array_column($value, '20K'));
+			$row['10K'] 		= array_sum(array_column($value, '10K'));
+			$row['5K'] 			= array_sum(array_column($value, '5K'));
+			$row['2K'] 			= array_sum(array_column($value, '2K'));
+			$row['1K'] 			= array_sum(array_column($value, '1K'));
+			$row['500'] 		= array_sum(array_column($value, '500'));
+			$row['200'] 		= array_sum(array_column($value, '200'));
+			$row['100'] 		= array_sum(array_column($value, '100'));
+
+			$finalOutput[] = $row;
+		}
+
+		// dd($finalOutput);
+
 		$x['startDate'] = $startDate;
 		$x['endDate'] 	= $endDate;
-		$x['data'] 		= $data;
+		$x['data'] 		= $finalOutput;
 		// dd($data);
 		// return view('export.laporan_receh', $x);
 		return Excel::download(new GeneralViewExport('export.laporan_receh', $x), 'receh-export-'.(date('YmdHis')).'.xlsx');
