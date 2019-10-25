@@ -353,7 +353,7 @@ class ReportController extends Controller
 					SELECT mr.reported_date, man_hour, shift, 
 					mr.group_id, g.name group_name, g.section bagian, employee_id,
 					t_sum_salary.total_gaji_group, t_sum_manhour.total_manhour_group, 
-					(t_sum_salary.total_gaji_group / t_sum_manhour.total_manhour_group) * man_hour as gaji
+					CEIL(t_sum_salary.total_gaji_group / t_sum_manhour.total_manhour_group) * man_hour as gaji
 					FROM mandays_report mr
 					LEFT JOIN tblgroups g ON mr.group_id=g.id
 					LEFT JOIN (
@@ -380,7 +380,8 @@ class ReportController extends Controller
 		$result = DB::select($sql, [$startDate, $endDate, $startDate, $endDate, $startDate, $endDate]);
 
 		foreach ($result as $key => $value) {
-			$value->receh = $this->receh($value->salary);
+			$value->gaji_bulat_100 = ($value->salary % 100 > 0) ? ($value->salary - ($value->salary % 100) + 100) : $value->salary;
+			$value->receh = $this->receh($value->gaji_bulat_100);
 		}
 
 		// dd($result);
@@ -391,6 +392,7 @@ class ReportController extends Controller
 			$row["group_name"]			= $value->group_name;
 			$row["karyawan"] 			= $value->employee_id;
 			$row["gaji"] 				= $value->salary;
+			$row["gaji_bulat_100"]		= $value->gaji_bulat_100;
 			foreach ($value->receh as $pecahan => $receh) {
 				$row[$pecahan] = $receh;
 			}
@@ -410,6 +412,7 @@ class ReportController extends Controller
 			$row['bagian'] 		= $value[0]['bagian'];
 			$row['jumlah_karyawan'] = count($value);
 			$row['gaji'] 		= array_sum(array_column($value, 'gaji'));
+			$row['gaji_bulat_100']	= array_sum(array_column($value, 'gaji_bulat_100'));
 			$row['100K'] 		= array_sum(array_column($value, '100K'));
 			$row['50K'] 		= array_sum(array_column($value, '50K'));
 			$row['20K'] 		= array_sum(array_column($value, '20K'));
