@@ -88,6 +88,38 @@ class ReportController extends Controller
 			$value->detail = $row;
 		}
 
+		$rekapUpahBoronganSQL = "SELECT mr.reported_date, 
+				sum(ceil(t_sum_salary.total_gaji_group / t_sum_manhour.total_manhour_group) * mr.man_hour) as gaji_total
+			FROM mandays_report mr 
+				LEFT JOIN (
+					SELECT pr.reported_date, pr.group_id, SUM(pr.qty_output * part.price) total_gaji_group
+					FROM production_report pr
+					INNER JOIN part ON part.part_number = pr.part_number
+					INNER JOIN tblgroups g2 ON g2.id = pr.group_id
+					WHERE pr.reported_date BETWEEN ? AND ?
+					GROUP BY pr.reported_date, pr.group_id
+				) t_sum_salary 
+					ON t_sum_salary.reported_date = mr.reported_date AND t_sum_salary.group_id = mr.group_id
+				LEFT JOIN (
+					SELECT mr0.reported_date, mr0.group_id, SUM(mr0.man_hour) total_manhour_group
+					FROM mandays_report mr0
+					WHERE mr0.reported_date BETWEEN ? AND ?
+					GROUP BY mr0.reported_date, mr0.group_id
+				) t_sum_manhour 
+					ON t_sum_manhour.reported_date = mr.reported_date AND t_sum_manhour.group_id = mr.group_id
+			WHERE mr.group_id = 1 AND mr.reported_date BETWEEN ? AND ?
+			GROUP BY mr.reported_date 
+			ORDER BY mr.reported_date ASC";
+
+		$dataRekapUpahBorongan = DB::select($rekapUpahBoronganSQL, array($startDate, $endDate, $startDate, $endDate, $startDate, $endDate));
+		
+		$rekap = array();
+		foreach ($dataRekapUpahBorongan as $key => $value) {
+			$rekap[$value->reported_date] = $value->gaji_total;
+		}
+		// echo "<pre>"; print_r($dateList);
+		// dd($rekap);
+
 		if ($exportType == "view") {
 			$this->data['groups'] = \App\Model\Group::all();
 			$this->data['data']	  = $data;
@@ -100,6 +132,9 @@ class ReportController extends Controller
 			$this->data['endDate'] 	 = $endDate;
 			$this->data['data']	  	 = $data;
 			$this->data['dateList']	 = $dateList;
+			$this->data['rekapUpah'] = $rekap;
+
+			// dd($data);
 
 			// return view('export.laporan_produksi', $this->data);
 			return Excel::download(new GeneralViewExport('export.laporan_produksi', $this->data), 'production-report-'.(date('YmdHis')).'.xlsx');
@@ -167,19 +202,11 @@ class ReportController extends Controller
 			->whereBetween('production_report.reported_date', [$startDate, $endDate])
 			->sum(DB::raw('production_report.qty_output * part.price'));
 
-		// echo $totalPrice;
-		// echo "<br>";
-
 		$totalManhour = DB::table('mandays_report')
 			->where('mandays_report.group_id', $groupId)
 			->whereBetween('mandays_report.reported_date', [$startDate, $endDate])
 			->sum('mandays_report.man_hour');
 
-		// echo $totalManhour;
-		// echo "<br>";
-		// echo $totalPrice / $totalManhour;
-		// echo "<br>";
-		
 		$sql = "SELECT reported_date, 
 			employee_id, e.nik employee_nik, e.name employee_name, man_hour, shift, 
 			mr.group_id, g.name group_name
@@ -205,8 +232,6 @@ class ReportController extends Controller
 		}
 
 		$export = array();
-
-		// dd(array_column($data, 'employee_nik'));
 
 		foreach ($data as $k1 => $v1) {
 			if (array_key_exists($v1->employee_nik, $export)) continue;
@@ -277,41 +302,74 @@ class ReportController extends Controller
 		$startDate 	= $request->input('startDate');
 		$endDate 	= $request->input('endDate');
 
-
-		$sql = "SELECT t1.*, g.name group_name, g.section bagian, count(distinct(mr.employee_id)) jumlah_karyawan
+		$sql = "SELECT group_id, group_name, bagian, employee_id, sum(t.gaji) as salary 
 				FROM (
-					SELECT pr.group_id, sum(pr.qty_output * part.price) total
-					FROM production_report pr 
-						INNER JOIN part ON part.part_number = pr.part_number
-						INNER JOIN tblgroups g ON g.id = pr.group_id
-					WHERE pr.reported_date BETWEEN ? AND ?
-					GROUP BY group_id
-				) t1 
-				INNER JOIN 
-				(
-					SELECT group_id, sum(man_hour) total_mh
+					SELECT mr.reported_date, man_hour, shift, 
+					mr.group_id, g.name group_name, g.section bagian, employee_id,
+					t_sum_salary.total_gaji_group, t_sum_manhour.total_manhour_group, 
+					CEIL(t_sum_salary.total_gaji_group / t_sum_manhour.total_manhour_group) * man_hour as gaji
 					FROM mandays_report mr
+					LEFT JOIN tblgroups g ON mr.group_id=g.id
+					LEFT JOIN (
+						SELECT pr.reported_date, pr.group_id, SUM(pr.qty_output * part.price) total_gaji_group
+						FROM production_report pr
+						INNER JOIN part ON part.part_number = pr.part_number
+						INNER JOIN tblgroups g2 ON g2.id = pr.group_id
+						WHERE pr.reported_date BETWEEN ? AND ?
+						GROUP BY pr.reported_date, pr.group_id
+					) t_sum_salary 
+						ON t_sum_salary.reported_date = mr.reported_date AND t_sum_salary.group_id = mr.group_id
+					LEFT JOIN (
+						SELECT mr0.reported_date, mr0.group_id, SUM(mr0.man_hour) total_manhour_group
+						FROM mandays_report mr0
+						WHERE mr0.reported_date BETWEEN ? AND ?
+						GROUP BY mr0.reported_date, mr0.group_id
+					) t_sum_manhour 
+						ON t_sum_manhour.reported_date = mr.reported_date AND t_sum_manhour.group_id = mr.group_id
 					WHERE mr.reported_date BETWEEN ? AND ?
-					GROUP BY group_id
-				) t2 on t1.group_id = t2.group_id
-				INNER JOIN mandays_report mr ON mr.group_id = t1.group_id
-				INNER JOIN tblgroups g ON g.id = mr.group_id
-				GROUP BY group_id, total, g.name, g.section;
-		";
+					ORDER BY mr.reported_date, mr.group_id ASC
+				) t 
+				group by group_id, group_name, bagian, employee_id";
 		
-		$result = DB::select($sql, [$startDate, $endDate, $startDate, $endDate]);		
+		$result = DB::select($sql, [$startDate, $endDate, $startDate, $endDate, $startDate, $endDate]);
 
 		foreach ($result as $key => $value) {
+			$value->gaji_bulat_100 = ($value->salary % 100 > 0) ? ($value->salary - ($value->salary % 100) + 100) : $value->salary;
+		}
+
+		// dd($result);
+
+		foreach ($result as $key => $value) {
+			$row["group_id"]			= $value->group_id;
 			$row["bagian"] 				= $value->bagian;
 			$row["group_name"]			= $value->group_name;
-			$row["jumlah_karyawan"] 	= $value->jumlah_karyawan;
-			$row["gaji"] 				= $value->total;
+			$row["karyawan"] 			= $value->employee_id;
+			$row["gaji"] 				= $value->salary;
+			$row["gaji_bulat_100"]		= $value->gaji_bulat_100;
 			$data[] = $row;
+		}
+		// dd($data);
+
+		$groupByGroupId = array();
+		foreach ($data as $key => $value) {
+			$groupByGroupId[$value['group_id']][] = $value;
+		}
+
+		$finalOutput = array();
+		foreach ($groupByGroupId as $key => $value) {
+			$row['group_id'] 		= $value[0]['group_id'];
+			$row['bagian'] 			= $value[0]['bagian'];
+			$row['group_name'] 		= $value[0]['group_name'];
+			$row['jumlah_karyawan'] = count($value);
+			$row['gaji'] 			= array_sum(array_column($value, 'gaji'));
+			$row['gaji_bulat_100']	= array_sum(array_column($value, 'gaji_bulat_100'));
+
+			$finalOutput[] = $row;
 		}
 
 		$x['startDate'] = $startDate;
 		$x['endDate'] 	= $endDate;
-		$x['data'] 		= $data;
+		$x['data'] 		= $finalOutput;
 
 		// return view('export.laporan_rekap_gaji_borongan', $x);
 		return Excel::download(new GeneralViewExport('export.laporan_rekap_gaji_borongan', $x), 'group-summary-export-'.(date('YmdHis')).'.xlsx');
@@ -326,27 +384,6 @@ class ReportController extends Controller
 	{
 		$startDate 	= $request->input('startDate');
 		$endDate 	= $request->input('endDate');
-
-		// $sql = "SELECT t1.*, g.name group_name, g.section bagian, count(distinct(mr.employee_id)) jumlah_karyawan
-		// 		FROM (
-		// 			SELECT pr.group_id, sum(pr.qty_output * part.price) total
-		// 			FROM production_report pr 
-		// 				INNER JOIN part ON part.part_number = pr.part_number
-		// 				INNER JOIN tblgroups g ON g.id = pr.group_id
-		// 			WHERE pr.reported_date BETWEEN ? AND ?
-		// 			GROUP BY group_id
-		// 		) t1 
-		// 		INNER JOIN 
-		// 		(
-		// 			SELECT group_id, sum(man_hour) total_mh
-		// 			FROM mandays_report mr
-		// 			WHERE mr.reported_date BETWEEN ? AND ?
-		// 			GROUP BY group_id
-		// 		) t2 on t1.group_id = t2.group_id
-		// 		INNER JOIN mandays_report mr ON mr.group_id = t1.group_id
-		// 		INNER JOIN tblgroups g ON g.id = mr.group_id
-		// 		GROUP BY group_id, total, g.name, g.section;
-		// ";
 
 		$sql = "SELECT group_id, group_name, bagian, employee_id, sum(t.gaji) as salary 
 				FROM (
@@ -490,7 +527,8 @@ class ReportController extends Controller
 				FROM (
 					SELECT mr.reported_date, 
 					employee_id, e.nik employee_nik, e.name employee_name, e.rekening employee_rekening,  man_hour, shift, 
-					mr.group_id, g.name group_name, t_sum_salary.total_gaji_group, t_sum_manhour.total_manhour_group, (t_sum_salary.total_gaji_group / t_sum_manhour.total_manhour_group) * man_hour as gaji
+					mr.group_id, g.name group_name, t_sum_salary.total_gaji_group, t_sum_manhour.total_manhour_group, 
+					ceil(t_sum_salary.total_gaji_group / t_sum_manhour.total_manhour_group) * man_hour as gaji
 					FROM mandays_report mr
 					LEFT JOIN tblgroups g ON mr.group_id=g.id
 					LEFT JOIN employee e ON mr.employee_id=e.id
@@ -524,9 +562,9 @@ class ReportController extends Controller
 			$row['Rekening'] 	= $value->employee_rekening;
 			$row['Bank'] 		= "UOB";
 			$row['Cabang']		= "JAKARTA";
-			$row['Total Gaji']  = $value->salary;
+			$row['Total Gaji']  = ($value->salary % 100 > 0 ) ? $value->salary - ($value->salary % 100) + 100 : $value->salary;
 			$row['Tanggal Debet'] = $endDate;
-			$row['Keterangan'] = "GAJI PT. FURNILAC PRIMAGUNA";
+			$row['Keterangan'] 	= "GAJI PT. FURNILAC PRIMAGUNA";
 			$export[] = $row;
 		}
 

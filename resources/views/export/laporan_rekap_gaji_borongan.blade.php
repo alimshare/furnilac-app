@@ -13,7 +13,8 @@
 				<th>Bagian</th>
 				<th>Nama Group</th>
 				<th>Jumlah Orang</th>
-				<th>Gaji</th>
+				<th>Gaji Normal</th>
+				<th>Gaji Pembulatan</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -23,6 +24,7 @@
 				<td style="text-align: left;">{{  $o['group_name'] }}</td>
 				<td>{{  $o['jumlah_karyawan'] }}</td>
 				<td>{{  $o['gaji'] }}</td>
+				<td>{{  $o['gaji_bulat_100'] }}</td>
 			</tr>
 			@endforeach
 		</tbody>
@@ -31,6 +33,7 @@
 				<th colspan="2" style="text-align: center;">Total</th>
 				<th>{{ array_sum(array_column($data, 'jumlah_karyawan')) }}</th>
 				<th>{{ array_sum(array_column($data, 'gaji')) }}</th>
+				<th>{{ array_sum(array_column($data, 'gaji_bulat_100')) }}</th>
 			</tr>
 		</tfoot>
 	</table>

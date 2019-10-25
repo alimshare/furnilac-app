@@ -41,13 +41,37 @@
 			@endforeach
 		</tbody>
 		<tfoot>
+			<?php $temp1 = array(); ?>
 			<tr>
 				<td colspan="3">Total</td>
 				<td>{{ array_sum(array_column($data, 'part_price')) }}</td>
 				@foreach($data[0]->detail as $k => $d)
-					<td>{{ array_sum(array_column(array_column($data, 'detail'), $k)) }}</td>
+					<td>{{ $x = array_sum(array_column(array_column($data, 'detail'), $k)) }}</td>
+					<?php 
+						if (strpos($k, 'total') !== false) {
+							$temp1[] = $x;
+						}
+					 ?>
 				@endforeach
 			</tr>
+		<tr>			
+			<?php $temp2 = array(); ?>
+			<td colspan="4">Pembayaran Karyawan</td>
+			@foreach($dateList as $date)
+				<td colspan="2">{{  $temp2[] = array_key_exists($date, $rekapUpah) ? $rekapUpah[$date] : 0  }}</td>
+			@endforeach
+		</tr>
+		<tr>
+			<?php $sumTemp = array(); ?>
+			<td colspan="4">Selisih</td>
+			@foreach($temp1 as $k => $t1)
+				<td colspan="2">{{ $sumTemp[] = ($temp2[$k] - $temp1[$k]) }}</td>
+			@endforeach
+		</tr>
+		<tr>
+			<td colspan="4">Total Selisih</td>
+			<td colspan="{{ count($dateList) * 2 }}">{{ array_sum($sumTemp) }}</td>
+		</tr>
 		</tfoot>
 	</table>
 
