@@ -240,7 +240,7 @@ class ReportController extends Controller
 			foreach ($row['dateList'] as $k2 => $v2) 
 			{
 				if ($k2 == $v1->reported_date) {
-					$price_per_hour = ($row['dateList'][$k2]['totalGaji'] / $row['dateList'][$k2]['totalManHour']);
+					$price_per_hour = ceil($row['dateList'][$k2]['totalGaji'] / $row['dateList'][$k2]['totalManHour']);
 					$salary = $price_per_hour * $v1->man_hour;
 
 					$row['dateList'][$k2]['jam'] 	= $v1->man_hour;
@@ -262,7 +262,7 @@ class ReportController extends Controller
 		$x['dateList']	= $dateList;
 		$x['data']		= $export;
 
-		return view('export.laporan_rekap_upah_borongan', $x);
+		// return view('export.laporan_rekap_upah_borongan', $x);
 		return Excel::download(new GeneralViewExport('export.laporan_rekap_upah_borongan', $x), 'group-export-'.(date('YmdHis')).'.xlsx');
 
 	}

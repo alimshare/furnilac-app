@@ -17,6 +17,7 @@
 					<td colspan="2">{{ $date }}</td>
 				@endforeach
 				<td rowspan="2">Total</td>
+				<td rowspan="2">Total Pembulatan</td>
 			</tr>
 			<tr>
 				@foreach($dateList as $date)
@@ -26,7 +27,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<?php $totals = array(); $grandTotal = 0; $countDailyEmployee = array(); ?>
+			<?php $totals = array(); $grandTotal = 0; $grandTotalPembulatan = 0; $countDailyEmployee = array(); ?>
 			@foreach($data as $o)
 			<tr>
 				<td>{{ $o['NIK'] }}</td>
@@ -49,8 +50,14 @@
 					<td>{{ $v['jam'] }}</td>
 					<td>{{ $v['gaji'] }}</td>
 				@endforeach
+				
 				<td>{{ $totalGaji = array_sum(array_column($o['dateList'], 'gaji')) }}</td>
-				<?php $grandTotal = $grandTotal + $totalGaji; ?>
+				<td>{{ $totalGajiPembulatan = ($totalGaji % 100 > 0)  ? ($totalGaji - ($totalGaji % 100) + 100) : $totalGaji  }}</td>
+
+				<?php 
+					$grandTotal = $grandTotal + $totalGaji; 
+					$grandTotalPembulatan = $grandTotalPembulatan + $totalGajiPembulatan; 
+				?>
 			</tr>
 			@endforeach
 		</tbody>
@@ -61,19 +68,24 @@
 					<td>{{ $total }}</td>
 				@endforeach
 				<td>{{ $grandTotal }}</td>
+				<td>{{ $grandTotalPembulatan  }}</td>
 			</tr>
 			<tr>
 				<td colspan="2">Jumlah Karyawan</td>
+				<?php $totalKaryawan = 0; ?>
 				@foreach ($countDailyEmployee  as $key => $o)
 					<td colspan="2" style="text-align: right;">{{ $o }}</td>
+					<?php $totalKaryawan = $totalKaryawan + $o ?>
 				@endforeach
+				<td>{{ $totalKaryawan }}</td>
 				<td></td>
 			</tr>
 			<tr>
 				<td colspan="2">Gaji Per Jam</td>
 				@foreach (array_column($data, 'dateList')[0]  as $key => $o)
-					<td colspan="2" style="text-align: right;">{{ ($o['totalManHour'] == 0) ? 0 : $o['totalGaji'] / $o['totalManHour'] }}</td>
+					<td colspan="2" style="text-align: right;">{{ ($o['totalManHour'] == 0) ? 0 : ceil($o['totalGaji'] / $o['totalManHour']) }}</td>
 				@endforeach
+				<td></td>
 				<td></td>
 			</tr>
 		</tfoot>
