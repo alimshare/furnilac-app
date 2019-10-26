@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html>
-<head></head>
+<head>
+	<style type="text/css">
+		body {
+			font-family: arial;
+		}
+
+		table tr{
+			font-size: 0.8em;
+		}
+	</style>	
+</head>
 <body>
 
 	<h2>LAPORAN REKAPITULASI UPAH BORONGAN</h2>
@@ -8,20 +18,20 @@
 
 	<h4>PERIODE : {{ $startDate }} - {{ $endDate }}</h4>
 
-	<table border="1" cellpadding="10" cellspacing="0">
+	<table border="1" cellpadding="8px" cellspacing="0" width="100%">
 		<thead>
 			<tr>
-				<td rowspan="2">NIK</td>
-				<td rowspan="2">Nama</td>
+				<th rowspan="2">NIK</th>
+				<th rowspan="2">Nama</th>
 				@foreach($dateList as $date)
-					<td colspan="2">{{ $date }}</td>
+					<th colspan="2">{{ $date }}</th>
 				@endforeach
-				<td rowspan="2">Total</td>
+				<th rowspan="2">Total</th>
 			</tr>
 			<tr>
 				@foreach($dateList as $date)
-					<td>Jam</td>
-					<td>Gaji</td>
+					<th>Jam</th>
+					<th>Gaji</th>
 				@endforeach
 			</tr>
 		</thead>
@@ -46,39 +56,41 @@
 						} 
 
 					?>
-					<td>{{ $v['jam'] }}</td>
-					<td>{{ $v['gaji'] }}</td>
+					<td style="text-align: right;">{{ number_format($v['jam']) }}</td>
+					<td style="text-align: right;">{{ number_format($v['gaji']) }}</td>
 				@endforeach
 				
-				<td>{{ $totalGaji = array_sum(array_column($o['dateList'], 'gaji')) }}</td>
-
 				<?php 
+					$totalGaji = array_sum(array_column($o['dateList'], 'gaji'));
 					$grandTotal = $grandTotal + $totalGaji;
 				?>
+				<td style="text-align: right;">{{ number_format($totalGaji) }}</td>
+
 			</tr>
 			@endforeach
 		</tbody>
 		<tfoot>
 			<tr>
-				<td colspan="2">TOTAL</td>
+				<td colspan="2">Total</td>
 				@foreach ($totals  as $key => $total)
-					<td>{{ $total }}</td>
+					<td style="text-align: right;">{{ number_format($total) }}</td>
 				@endforeach
-				<td>{{ $grandTotal }}</td>
+				<td style="text-align: right;">{{ number_format($grandTotal) }}</td>
 			</tr>
 			<tr>
 				<td colspan="2">Jumlah Karyawan</td>
 				<?php $totalKaryawan = 0; ?>
 				@foreach ($countDailyEmployee  as $key => $o)
-					<td colspan="2" style="text-align: right;">{{ $o }}</td>
+					<td colspan="2" style="text-align: right;">{{ number_format($o) }}</td>
 					<?php $totalKaryawan = $totalKaryawan + $o ?>
 				@endforeach
-				<td>{{ $totalKaryawan }}</td>
+				<td style="text-align: right;">{{ number_format($totalKaryawan) }}</td>
 			</tr>
 			<tr>
 				<td colspan="2">Gaji Per Jam</td>
 				@foreach (array_column($data, 'dateList')[0]  as $key => $o)
-					<td colspan="2" style="text-align: right;">{{ ($o['totalManHour'] == 0) ? 0 : ceil($o['totalGaji'] / $o['totalManHour']) }}</td>
+					<?php $x = ($o['totalManHour'] == 0) ? 0 : ceil($o['totalGaji'] / $o['totalManHour']); ?>
+					<td colspan="2" style="text-align: right;">{{ number_format($x) }}</td>
 				@endforeach
 				<td></td>
 			</tr>

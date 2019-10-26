@@ -33,10 +33,10 @@ class ReportController extends Controller
 
 	public function formProductionExport(Request $request)
 	{
-		$exportType = "view";
-		if ($request->input('exportExcel')) {
-			$exportType = "excel";
-		} 
+		// $exportType = "view";
+		// if ($request->input('exportExcel')) {
+		// 	$exportType = "excel";
+		// } 
 
 		$groupId 	= $request->input('groupId');
 		$startDate 	= $request->input('startDate');
@@ -121,25 +121,31 @@ class ReportController extends Controller
 		// echo "<pre>"; print_r($dateList);
 		// dd($rekap);
 
-		if ($exportType == "view") {
-			$this->data['groups'] = \App\Model\Group::all();
-			$this->data['data']	  = $data;
-			return view('modules.report.report-production', $this->data);
-		} else {
-			$group = \App\Model\Group::find($groupId);
-			$this->data['group']  	 = $group->name;
-			$this->data['bagian'] 	 = $group->section;
-			$this->data['startDate'] = $startDate;
-			$this->data['endDate'] 	 = $endDate;
-			$this->data['data']	  	 = $data;
-			$this->data['dateList']	 = $dateList;
-			$this->data['rekapUpah'] = $rekap;
+		// if ($exportType == "view") {
+		// 	$this->data['groups'] = \App\Model\Group::all();
+		// 	$this->data['data']	  = $data;
+		// 	return view('modules.report.report-production', $this->data);
+		// } else {
+		$group = \App\Model\Group::find($groupId);
+		$this->data['group']  	 = $group->name;
+		$this->data['bagian'] 	 = $group->section;
+		$this->data['startDate'] = $startDate;
+		$this->data['endDate'] 	 = $endDate;
+		$this->data['data']	  	 = $data;
+		$this->data['dateList']	 = $dateList;
+		$this->data['rekapUpah'] = $rekap;
 
-			// dd($data);
+		// dd($data);
 
-			// return view('export.laporan_produksi', $this->data);
+		if ($request->input('pdf')) {
+			$pdf = PDF::loadView('export.laporan_produksi', $this->data)->setPaper('a4', 'landscape');
+			return $pdf->download('production-report-'.(date('YmdHis')).'.pdf');			
+		} else if ($request->input('excel')) {
 			return Excel::download(new GeneralViewExport('export.laporan_produksi', $this->data), 'production-report-'.(date('YmdHis')).'.xlsx');
+		} else {
+			return view('export.laporan_produksi', $this->data);
 		}
+		// }
 	}
 
 	public function formMandays(Request $request)
@@ -288,8 +294,15 @@ class ReportController extends Controller
 		$x['dateList']	= $dateList;
 		$x['data']		= $export;
 
-		// return view('export.laporan_rekap_upah_borongan', $x);
-		return Excel::download(new GeneralViewExport('export.laporan_rekap_upah_borongan', $x), 'group-export-'.(date('YmdHis')).'.xlsx');
+
+		if ($request->input('pdf')) {
+			$pdf = PDF::loadView('export.laporan_rekap_upah_borongan', $x)->setPaper('a4', 'landscape');
+			return $pdf->download('group-export-'.(date('YmdHis')).'.pdf');			
+		} else if ($request->input('excel')) {
+			return Excel::download(new GeneralViewExport('export.laporan_rekap_upah_borongan', $x), 'group-export-'.(date('YmdHis')).'.xlsx');
+		} else {
+			return view('export.laporan_rekap_upah_borongan', $x);
+		}
 
 	}
 
@@ -571,21 +584,36 @@ class ReportController extends Controller
 
 		$export = array();
 		foreach ($data as $key => $value) {
-			$row['NIK'] 		= $value->employee_nik;
-			$row['Nama'] 		= $value->employee_name;
-			$row['Rekening'] 	= $value->employee_rekening;
-			$row['Bank'] 		= "UOB";
-			$row['Cabang']		= "JAKARTA";
-			$row['Total Gaji']  = ($value->salary % 100 > 0 ) ? $value->salary - ($value->salary % 100) + 100 : $value->salary;
-			$row['Tanggal Debet'] = $endDate;
-			$row['Keterangan'] 	= "GAJI PT. FURNILAC PRIMAGUNA";
+			$row['nik'] 		= $value->employee_nik;
+			$row['nama'] 		= $value->employee_name;
+			$row['rekening'] 	= $value->employee_rekening;
+			$row['bank'] 		= "UOB";
+			$row['cabang']		= "JAKARTA";
+			$row['gaji']  = ($value->salary % 100 > 0 ) ? $value->salary - ($value->salary % 100) + 100 : $value->salary;
+			$row['tgl_debet'] = $endDate;
+			$row['keterangan'] 	= "GAJI PT. FURNILAC PRIMAGUNA";
 			$export[] = $row;
 		}
 
 		// dd($export);
 
 		$heading = array_keys(json_decode(json_encode($export[0]), true));
-		return Excel::download(new GeneralExport($heading, $export), 'salary-export-'.(date('YmdHis')).'.xlsx');
+		// return Excel::download(new GeneralExport($heading, $export), 'salary-export-'.(date('YmdHis')).'.xlsx');
+
+		$x['rows'] 		= json_decode(json_encode($export));
+		$x['headings'] 	= $heading;
+		$x['startDate'] = $startDate;
+		$x['endDate'] 	= $endDate;
+
+
+		if ($request->input('pdf')) {
+			$pdf = PDF::loadView('export.laporan_gaji', $x)->setPaper('a4', 'landscape');
+			return $pdf->download('salary-export-'.(date('YmdHis')).'.pdf');			
+		} else if ($request->input('excel')) {
+			return Excel::download(new GeneralViewExport('export.laporan_gaji', $x), 'salary-export-'.(date('YmdHis')).'.xlsx');
+		} else {
+			return view('export.laporan_gaji', $x);	
+		}
 	}
 
 
@@ -693,8 +721,16 @@ class ReportController extends Controller
 		$x['dateList']	= $dateList;
 		$x['data']		= $export;
 
-		// return view('export.laporan_tanda_terima_upah', $x);
-		return Excel::download(new GeneralViewExport('export.laporan_tanda_terima_upah', $x), 'tanda-terima-upah-'.(date('YmdHis')).'.xlsx');
+
+		if ($request->input('pdf')) {
+			$pdf = PDF::loadView('export.laporan_tanda_terima_upah', $x)->setPaper('a4');
+			return $pdf->download('tanda-terima-upah-'.(date('YmdHis')).'.pdf');
+
+		} else if ($request->input('excel')) {
+			return Excel::download(new GeneralViewExport('export.laporan_tanda_terima_upah', $x), 'tanda-terima-upah-'.(date('YmdHis')).'.xlsx');
+		} else {
+			return view('export.laporan_tanda_terima_upah', $x);
+		}
 
 	}
 }

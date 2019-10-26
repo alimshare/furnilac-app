@@ -8,14 +8,14 @@
 
 	<h4>PERIODE : {{ $startDate }} - {{ $endDate }}</h4>
 
-	<table border="1" cellpadding="10" cellspacing="0">
+	<table border="1" cellpadding="10" cellspacing="0" width="100%">
 		<thead>
 			<tr>
-				<td>NIK</td>
-				<td>Nama</td>
-				<td>Total</td>
-				<td>Total Pembulatan</td>
-				<td>TTD</td>
+				<th>NIK</th>
+				<th>Nama</th>
+				<th>Total</th>
+				<th>Total Pembulatan</th>
+				<th>Tth</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -40,9 +40,12 @@
 
 					?>
 				@endforeach
-				
-				<td>{{ $totalGaji = array_sum(array_column($o['dateList'], 'gaji')) }}</td>
-				<td>{{ $totalGajiPembulatan = ($totalGaji % 100 > 0)  ? ($totalGaji - ($totalGaji % 100) + 100) : $totalGaji  }}</td>
+				<?php 
+					$totalGaji = array_sum(array_column($o['dateList'], 'gaji'));
+					$totalGajiPembulatan = ($totalGaji % 100 > 0)  ? ($totalGaji - ($totalGaji % 100) + 100) : $totalGaji
+				 ?>
+				<td style="text-align: right;">{{ number_format($totalGaji)  }}</td>
+				<td style="text-align: right;">{{ number_format($totalGajiPembulatan)  }}</td>
 				<td></td>
 
 				<?php 
@@ -55,8 +58,8 @@
 		<tfoot>
 			<tr>
 				<td colspan="2">TOTAL</td>
-				<td>{{ $grandTotal }}</td>
-				<td>{{ $grandTotalPembulatan  }}</td>
+				<td style="text-align:right;">{{ number_format($grandTotal) }}</td>
+				<td style="text-align:right;">{{ number_format($grandTotalPembulatan) }}</td>
 				<td></td>
 			</tr>
 		</tfoot>
