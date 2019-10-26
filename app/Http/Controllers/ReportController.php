@@ -573,4 +573,114 @@ class ReportController extends Controller
 		$heading = array_keys(json_decode(json_encode($export[0]), true));
 		return Excel::download(new GeneralExport($heading, $export), 'salary-export-'.(date('YmdHis')).'.xlsx');
 	}
+
+
+
+	public function formTandaTerima(Request $request)
+	{
+		$this->data['groups'] = \App\Model\Group::all();
+		return view('modules.report.report-tanda-terima', $this->data);
+	}
+	
+	public function formTandaTerimaExport(Request $request)
+	{
+		$groupId 	= $request->input('groupId');
+		$startDate 	= $request->input('startDate');
+		$endDate 	= $request->input('endDate');
+
+		$totalPrice = DB::table('production_report')
+			->join('part', 'part.part_number', '=', 'production_report.part_number')
+			->where('production_report.group_id', $groupId)
+			->whereBetween('production_report.reported_date', [$startDate, $endDate])
+			->sum(DB::raw('production_report.qty_output * part.price'));
+
+		$totalManhour = DB::table('mandays_report')
+			->where('mandays_report.group_id', $groupId)
+			->whereBetween('mandays_report.reported_date', [$startDate, $endDate])
+			->sum('mandays_report.man_hour');
+
+		$sql = "SELECT reported_date, 
+			employee_id, e.nik employee_nik, e.name employee_name, man_hour, shift, 
+			mr.group_id, g.name group_name
+			FROM mandays_report mr 
+				LEFT JOIN tblgroups g ON mr.group_id=g.id
+				LEFT JOIN employee e ON mr.employee_id=e.id
+			WHERE mr.group_id = ? AND reported_date BETWEEN ? AND ? 
+			ORDER BY reported_date, group_id ASC ";
+
+		$data = DB::select($sql, [$groupId, $startDate, $endDate]);
+
+		foreach ($data as $key => $value) {
+			$value->price_per_hour = ($totalPrice / $totalManhour);
+			$value->salary = $value->price_per_hour * $value->man_hour;
+		}
+		// dd($data);
+		
+		$dateList = array();
+    	$currentDate = $startDate;
+		while (strtotime($currentDate) <= strtotime($endDate)) {
+		    $dateList[] = $currentDate;
+		    $currentDate = date ("Y-m-d", strtotime("+1 day", strtotime($currentDate)));
+		}
+
+		$export = array();
+
+		foreach ($data as $k1 => $v1) {
+			if (array_key_exists($v1->employee_nik, $export)) continue;
+
+			$row = array();
+			$row['NIK'] 	= $v1->employee_nik;
+			$row['Name'] 	= $v1->employee_name;
+			
+			foreach ($dateList as $k2 => $v2) {
+				$row['dateList'][$v2]['jam'] 	= 0;
+				$row['dateList'][$v2]['gaji'] 	= 0;
+				$row['dateList'][$v2]['totalGaji'] 	= DB::table('production_report')
+					->join('part', 'part.part_number', '=', 'production_report.part_number')
+					->where('production_report.group_id', $groupId)
+					->where('production_report.reported_date', $v2)
+					->sum(DB::raw('production_report.qty_output * part.price'));
+				$row['dateList'][$v2]['totalManHour'] 	= DB::table('mandays_report')
+					->where('mandays_report.group_id', $groupId)
+					->where('mandays_report.reported_date', $v2)
+					->sum('mandays_report.man_hour');
+			}			
+
+			$export[$v1->employee_nik] = $row; 
+		}
+
+		// dd($export);
+		// dd($data);
+		foreach ($data as $k1 => $v1) {
+
+			$row = $export[$v1->employee_nik];
+			foreach ($row['dateList'] as $k2 => $v2) 
+			{
+				if ($k2 == $v1->reported_date) {
+					$price_per_hour = ceil($row['dateList'][$k2]['totalGaji'] / $row['dateList'][$k2]['totalManHour']);
+					$salary = $price_per_hour * $v1->man_hour;
+
+					$row['dateList'][$k2]['jam'] 	= $v1->man_hour;
+					$row['dateList'][$k2]['gaji'] 	= $salary;
+				}
+			}
+
+			$export[$v1->employee_nik] = $row; 
+		}
+
+		// dd($export);
+
+		$group = \App\Model\Group::find($groupId);
+
+		$x['bagian'] 	= $group->section;
+		$x['group'] 	= $group->name;
+		$x['startDate'] = $startDate;
+		$x['endDate'] 	= $endDate;
+		$x['dateList']	= $dateList;
+		$x['data']		= $export;
+
+		// return view('export.laporan_tanda_terima_upah', $x);
+		return Excel::download(new GeneralViewExport('export.laporan_tanda_terima_upah', $x), 'tanda-terima-upah-'.(date('YmdHis')).'.xlsx');
+
+	}
 }

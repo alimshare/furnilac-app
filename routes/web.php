@@ -94,6 +94,8 @@ Route::get('/report/receh', 'ReportController@formReceh');
 Route::post('/report/receh', 'ReportController@formRecehExport');
 Route::get('/report/salary', 'ReportController@formSalary');
 Route::post('/report/salary', 'ReportController@formSalaryExport');
+Route::get('/report/tanda-terima', 'ReportController@formTandaTerima');
+Route::post('/report/tanda-terima', 'ReportController@formTandaTerimaExport');
 
 // Route::get('/report/salary', 'ReportController@form');
 // Route::get('/report/salary/group', 'ReportController@formGroup');

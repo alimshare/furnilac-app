@@ -56,6 +56,7 @@
         <li><a href="/report/group/summary"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Summary Group Salary Report</span></a></li>
         <li><a href="/report/receh"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Receh Report</span></a></li>
         <li><a href="/report/salary"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Summary Salary Report</span></a></li>
+        <li><a href="/report/tanda-terima"><i class="fa fa-circle-o"></i>&nbsp;&nbsp;<span> Tanda Terima Upah</span></a></li>
         
         <li class="header">Other</li>
         <li><a href="/user"><i class="fa fa-users"></i> <span>User Application</span></a></li>
