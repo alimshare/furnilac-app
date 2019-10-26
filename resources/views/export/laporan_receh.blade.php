@@ -33,8 +33,8 @@
 			<tr style="text-align: right;">
 				<td style="text-align: left;">{{  $o['bagian'] }}</td>
 				<td style="text-align: left;">{{  $o['group_name'] }}</td>
-				<td>{{  $o['gaji'] }}</td>
-				<td>{{  $o['gaji_bulat_100'] }}</td>
+				<td>{{  number_format($o['gaji']) }}</td>
+				<td>{{  number_format($o['gaji_bulat_100']) }}</td>
 				<td>{{  $o['jumlah_karyawan'] }}</td>
 				<td>{{  $o['100K'] }}</td>
 				<td>{{  $o['50K'] }}</td>
@@ -50,10 +50,10 @@
 			@endforeach
 		</tbody>
 		<tfoot>
-			<tr>				
-				<th colspan="2">Total</th>
-				<th>{{ array_sum(array_column($data, 'gaji')) }}</th>
-				<th>{{ array_sum(array_column($data, 'gaji_bulat_100')) }}</th>
+			<tr style="text-align: right;">				
+				<th colspan="2" style="text-align: left;">Total</th>
+				<th>{{ number_format(array_sum(array_column($data, 'gaji')), 0) }}</th>
+				<th>{{ number_format(array_sum(array_column($data, 'gaji_bulat_100'))) }}</th>
 				<th>{{ array_sum(array_column($data, 'jumlah_karyawan')) }}</th>
 				<th>{{ array_sum(array_column($data, '100K')) }}</th>
 				<th>{{ array_sum(array_column($data, '50K')) }}</th>

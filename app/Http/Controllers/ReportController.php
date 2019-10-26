@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Exports\GeneralExport;
 use App\Exports\GeneralViewExport;
 use Maatwebsite\Excel\Facades\Excel;
+use PDF;
 
 class ReportController extends Controller
 {
@@ -371,8 +372,14 @@ class ReportController extends Controller
 		$x['endDate'] 	= $endDate;
 		$x['data'] 		= $finalOutput;
 
-		// return view('export.laporan_rekap_gaji_borongan', $x);
-		return Excel::download(new GeneralViewExport('export.laporan_rekap_gaji_borongan', $x), 'group-summary-export-'.(date('YmdHis')).'.xlsx');
+		if ($request->input('pdf')) {
+			$pdf = PDF::loadView('export.laporan_rekap_gaji_borongan', $x);
+			return $pdf->download('group-summary-export-'.(date('YmdHis')).'.pdf');			
+		} else if ($request->input('excel')) {
+			return Excel::download(new GeneralViewExport('export.laporan_rekap_gaji_borongan', $x), 'group-summary-export-'.(date('YmdHis')).'.xlsx');
+		} else {
+			return view('export.laporan_rekap_gaji_borongan', $x);
+		}
 	}
 
 	public function formReceh(Request $request)
@@ -470,8 +477,15 @@ class ReportController extends Controller
 		$x['endDate'] 	= $endDate;
 		$x['data'] 		= $finalOutput;
 		// dd($data);
-		// return view('export.laporan_receh', $x);
-		return Excel::download(new GeneralViewExport('export.laporan_receh', $x), 'receh-export-'.(date('YmdHis')).'.xlsx');
+
+		if ($request->input('pdf')) {
+			$pdf = PDF::loadView('export.laporan_receh', $x)->setPaper('a4', 'landscape');
+			return $pdf->download('receh-export-'.(date('YmdHis')).'.pdf');			
+		} else if ($request->input('excel')) {
+			return Excel::download(new GeneralViewExport('export.laporan_receh', $x), 'receh-export-'.(date('YmdHis')).'.xlsx');
+		} else {
+			return view('export.laporan_receh', $x);
+		}
 
 	}
 
