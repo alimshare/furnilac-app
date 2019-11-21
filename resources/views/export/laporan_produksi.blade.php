@@ -55,15 +55,17 @@
 			<tr>
 				<td colspan="3">Total</td>
 				<td style="text-align: right;">{{ number_format(array_sum(array_column($data, 'part_price'))) }}</td>
-				@foreach($data[0]->detail as $k => $d)
-					<?php $x = array_sum(array_column(array_column($data, 'detail'), $k)) ?>
-					<td style="text-align: right;">{{ number_format($x) }}</td>
-					<?php 
-						if (strpos($k, 'total') !== false) {
-							$temp1[] = $x;
-						}
-					 ?>
-				@endforeach
+				@if(count($data) > 0)
+					@foreach($data[0]->detail as $k => $d)
+						<?php $x = array_sum(array_column(array_column($data, 'detail'), $k)) ?>
+						<td style="text-align: right;">{{ number_format($x) }}</td>
+						<?php 
+							if (strpos($k, 'total') !== false) {
+								$temp1[] = $x;
+							}
+						 ?>
+					@endforeach
+				@endif
 			</tr>
 		<tr>			
 			<?php $temp2 = array(); ?>
@@ -77,7 +79,10 @@
 			<?php $sumTemp = array(); ?>
 			<td colspan="4">Selisih</td>
 			@foreach($temp1 as $k => $t1)
-				<?php $x = ($temp2[$k] - $temp1[$k]); $sumTemp[] = $x; ?>
+				<?php 
+					$x = $temp2[$k] > 0 ? ($temp2[$k] - $temp1[$k]) : 0; 
+					$sumTemp[] = $x; 
+				?>
 				<td colspan="2" style="text-align: right;">{{ number_format($x) }}</td>
 			@endforeach
 		</tr>

@@ -40,6 +40,7 @@
             <li><a href="/employee"><i class="fa fa-user"></i>Employee</a></li>
             <li><a href="/buyer"><i class="fa fa-user"></i>Buyer</a></li>
             <li><a href="/item"><i class="fa fa-cube"></i> Item & Parts</a></li>
+            <li><a href="/report-period"><i class="fa fa-cube"></i> Report Period</a></li>
           </ul>
         </li>
         <li><a href="/po"><i class="fas fa-clipboard-list"></i>&nbsp;&nbsp;<span> Purchase Order</span></a></li>

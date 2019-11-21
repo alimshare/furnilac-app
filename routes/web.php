@@ -56,6 +56,13 @@ Route::get('/item/{id}/edit/{part_id}', 'ItemController@part_edit');
 Route::post('/item/{id}/edit', 'ItemController@part_update');
 Route::post('/item/{id}/delete', 'ItemController@part_delete');
 
+Route::get('/report-period', 'ReportPeriodController@list');
+Route::get('/report-period/new', 'ReportPeriodController@new');
+Route::post('/report-period/new', 'ReportPeriodController@save');
+Route::get('/report-period/edit/{id?}', 'ReportPeriodController@edit');
+Route::post('/report-period/edit', 'ReportPeriodController@update');
+Route::post('/report-period/delete', 'ReportPeriodController@delete');
+
 Route::get('/po', 'POController@list');
 Route::get('/po/new', 'POController@new');
 Route::post('/po/new', 'POController@save');

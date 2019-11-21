@@ -88,10 +88,13 @@
 			</tr>
 			<tr>
 				<td colspan="2">Gaji Per Jam</td>
-				@foreach (array_column($data, 'dateList')[0]  as $key => $o)
-					<?php $x = ($o['totalManHour'] == 0) ? 0 : ceil($o['totalGaji'] / $o['totalManHour']); ?>
-					<td colspan="2" style="text-align: right;">{{ number_format($x) }}</td>
-				@endforeach
+				<?php $cols = array_column($data, 'dateList'); ?>
+				@if (count($cols) > 0)
+					@foreach ($cols[0]  as $key => $o)
+						<?php $x = ($o['totalManHour'] == 0) ? 0 : ceil($o['totalGaji'] / $o['totalManHour']); ?>
+						<td colspan="2" style="text-align: right;">{{ number_format($x) }}</td>
+					@endforeach
+				@endif
 				<td></td>
 			</tr>
 		</tfoot>
