@@ -28,6 +28,7 @@ class ReportController extends Controller
 	public function formProduction(Request $request)
 	{
 		$this->data['groups'] = \App\Model\Group::all();
+		$this->data['periods'] = \App\Model\ReportPeriod::all();
 		return view('modules.report.report-production', $this->data);
 	}
 
@@ -39,13 +40,15 @@ class ReportController extends Controller
 		// } 
 
 		$groupId 	= $request->input('groupId');
+		$periodId	= $request->input('periodId');
+
 		$startDate 	= $request->input('startDate');
 		$endDate 	= $request->input('endDate');
 
-		$sql = "SELECT reported_date, pr.po_number, pr.part_number, qty_output, pr.group_id, g.name group_name, part.price as part_price, part.part_name  
+		$sql = "SELECT reported_date, pr.po_number, pr.part_number, qty_output, pr.group_id, g.name group_name, part.price as part_price  
 				FROM production_report pr 
 					LEFT JOIN tblgroups g ON pr.group_id=g.id 
-					LEFT JOIN part on part.part_number = pr.part_number
+					LEFT JOIN vw_part_period_price part on part.part_number = pr.part_number AND part.period_id = ?
 				WHERE reported_date BETWEEN ? AND ?  ";
 
 		if ($groupId != null && $groupId != "") {
@@ -55,7 +58,7 @@ class ReportController extends Controller
 		$sql .= "ORDER BY reported_date, pr.group_id, pr.po_number ASC";
 		// dd($sql);
 
-		$data = DB::select($sql, array($startDate, $endDate));
+		$data = DB::select($sql, array($periodId, $startDate, $endDate));
 
 		// dd($data);
 		
@@ -95,7 +98,7 @@ class ReportController extends Controller
 				LEFT JOIN (
 					SELECT pr.reported_date, pr.group_id, SUM(pr.qty_output * part.price) total_gaji_group
 					FROM production_report pr
-					INNER JOIN part ON part.part_number = pr.part_number
+					INNER JOIN vw_part_period_price part ON part.part_number = pr.part_number AND part.period_id = ? 
 					INNER JOIN tblgroups g2 ON g2.id = pr.group_id
 					WHERE pr.reported_date BETWEEN ? AND ?
 					GROUP BY pr.reported_date, pr.group_id
@@ -112,7 +115,7 @@ class ReportController extends Controller
 			GROUP BY mr.reported_date 
 			ORDER BY mr.reported_date ASC";
 
-		$dataRekapUpahBorongan = DB::select($rekapUpahBoronganSQL, array($startDate, $endDate, $startDate, $endDate, $startDate, $endDate));
+		$dataRekapUpahBorongan = DB::select($rekapUpahBoronganSQL, array($periodId, $startDate, $endDate, $startDate, $endDate, $startDate, $endDate));
 		
 		$rekap = array();
 		foreach ($dataRekapUpahBorongan as $key => $value) {
