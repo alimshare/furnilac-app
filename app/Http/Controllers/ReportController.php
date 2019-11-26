@@ -42,8 +42,10 @@ class ReportController extends Controller
 		$groupId 	= $request->input('groupId');
 		$periodId	= $request->input('periodId');
 
-		$startDate 	= $request->input('startDate');
-		$endDate 	= $request->input('endDate');
+		$p = \App\Model\ReportPeriod::find($periodId);
+		$startDate 	= $p->start_period;
+		$endDate 	= $p->end_period;
+		// dd($p);
 
 		$sql = "SELECT reported_date, pr.po_number, pr.part_number, qty_output, pr.group_id, g.name group_name, part.price as part_price  
 				FROM production_report pr 
@@ -140,20 +142,21 @@ class ReportController extends Controller
 
 		// dd($data);
 
-		if ($request->input('pdf')) {
-			$pdf = PDF::loadView('export.laporan_produksi', $this->data)->setPaper('a4', 'landscape');
-			return $pdf->download('production-report-'.(date('YmdHis')).'.pdf');			
-		} else if ($request->input('excel')) {
-			return Excel::download(new GeneralViewExport('export.laporan_produksi', $this->data), 'production-report-'.(date('YmdHis')).'.xlsx');
-		} else {
+		// if ($request->input('pdf')) {
+		// 	$pdf = PDF::loadView('export.laporan_produksi', $this->data)->setPaper('a4', 'landscape');
+		// 	return $pdf->download('production-report-'.(date('YmdHis')).'.pdf');			
+		// } else if ($request->input('excel')) {
+		// 	return Excel::download(new GeneralViewExport('export.laporan_produksi', $this->data), 'production-report-'.(date('YmdHis')).'.xlsx');
+		// } else {
 			return view('export.laporan_produksi', $this->data);
-		}
+		// }
 		// }
 	}
 
 	public function formMandays(Request $request)
 	{
 		$this->data['groups'] = \App\Model\Group::all();
+		$this->data['periods'] = \App\Model\ReportPeriod::all();
 		return view('modules.report.report-mandays', $this->data);
 	}
 	
@@ -165,8 +168,11 @@ class ReportController extends Controller
 		}
 
 		$groupId 	= $request->input('groupId');
-		$startDate 	= $request->input('startDate');
-		$endDate 	= $request->input('endDate');
+		$periodId 	= $request->input('periodId');
+
+		$p = \App\Model\ReportPeriod::find($periodId);
+		$startDate 	= $p->start_period;
+		$endDate 	= $p->end_period;
 
 		$sql = "SELECT reported_date, employee_id, e.nik employee_nik, e.name employee_name, man_hour, shift, mr.group_id, g.name group_name
 				FROM mandays_report mr 
@@ -186,6 +192,7 @@ class ReportController extends Controller
 
 		if ($exportType == "view") {
 			$this->data['groups'] = \App\Model\Group::all();
+			$this->data['periods'] = \App\Model\ReportPeriod::all();
 			$this->data['data']	  = $data;
 			return view('modules.report.report-mandays', $this->data);
 		} else {
@@ -197,17 +204,27 @@ class ReportController extends Controller
 	public function formGroup(Request $request)
 	{
 		$this->data['groups'] = \App\Model\Group::all();
+		$this->data['periods'] = \App\Model\ReportPeriod::all();
 		return view('modules.report.report-group', $this->data);
 	}
 	
 	public function formGroupExport(Request $request)
 	{
 		$groupId 	= $request->input('groupId');
-		$startDate 	= $request->input('startDate');
-		$endDate 	= $request->input('endDate');
+		$periodId 	= $request->input('periodId');
+
+		$p = \App\Model\ReportPeriod::find($periodId);
+		$startDate 	= $p->start_period;
+		$endDate 	= $p->end_period;
+		// $startDate 	= $request->input('startDate');
+		// $endDate 	= $request->input('endDate');
 
 		$totalPrice = DB::table('production_report')
-			->join('part', 'part.part_number', '=', 'production_report.part_number')
+			// ->join('part', 'part.part_number', '=', 'production_report.part_number')
+			->join('vw_part_period_price as part', function($join) use ($periodId) {
+                    $join->on('part.part_number', '=', 'production_report.part_number');
+                    $join->where('part.period_id', '=', $periodId);					
+				})
 			->where('production_report.group_id', $groupId)
 			->whereBetween('production_report.reported_date', [$startDate, $endDate])
 			->sum(DB::raw('production_report.qty_output * part.price'));
@@ -254,7 +271,11 @@ class ReportController extends Controller
 				$row['dateList'][$v2]['jam'] 	= 0;
 				$row['dateList'][$v2]['gaji'] 	= 0;
 				$row['dateList'][$v2]['totalGaji'] 	= DB::table('production_report')
-					->join('part', 'part.part_number', '=', 'production_report.part_number')
+					// ->join('part', 'part.part_number', '=', 'production_report.part_number')
+					->join('vw_part_period_price as part', function($join) use ($periodId)  {
+		                    $join->on('part.part_number', '=', 'production_report.part_number');
+		                    $join->where('part.period_id', '=', $periodId);					
+						})
 					->where('production_report.group_id', $groupId)
 					->where('production_report.reported_date', $v2)
 					->sum(DB::raw('production_report.qty_output * part.price'));
@@ -298,26 +319,32 @@ class ReportController extends Controller
 		$x['data']		= $export;
 
 
-		if ($request->input('pdf')) {
-			$pdf = PDF::loadView('export.laporan_rekap_upah_borongan', $x)->setPaper('a4', 'landscape');
-			return $pdf->download('group-export-'.(date('YmdHis')).'.pdf');			
-		} else if ($request->input('excel')) {
-			return Excel::download(new GeneralViewExport('export.laporan_rekap_upah_borongan', $x), 'group-export-'.(date('YmdHis')).'.xlsx');
-		} else {
+		// if ($request->input('pdf')) {
+		// 	$pdf = PDF::loadView('export.laporan_rekap_upah_borongan', $x)->setPaper('a4', 'landscape');
+		// 	return $pdf->download('group-export-'.(date('YmdHis')).'.pdf');			
+		// } else if ($request->input('excel')) {
+		// 	return Excel::download(new GeneralViewExport('export.laporan_rekap_upah_borongan', $x), 'group-export-'.(date('YmdHis')).'.xlsx');
+		// } else {
 			return view('export.laporan_rekap_upah_borongan', $x);
-		}
+		// }
 
 	}
 
 	public function formGroupSummary(Request $request)
 	{
+		$this->data['periods'] = \App\Model\ReportPeriod::all();
 		return view('modules.report.report-group-summary', $this->data);
 	}
 
 	public function formGroupSummaryExport(Request $request)
 	{
-		$startDate 	= $request->input('startDate');
-		$endDate 	= $request->input('endDate');
+		$periodId 	= $request->input('periodId');
+
+		$p = \App\Model\ReportPeriod::find($periodId);
+		$startDate 	= $p->start_period;
+		$endDate 	= $p->end_period;
+		// $startDate 	= $request->input('startDate');
+		// $endDate 	= $request->input('endDate');
 
 		$sql = "SELECT group_id, group_name, bagian, employee_id, sum(t.gaji) as salary 
 				FROM (
@@ -330,7 +357,7 @@ class ReportController extends Controller
 					LEFT JOIN (
 						SELECT pr.reported_date, pr.group_id, SUM(pr.qty_output * part.price) total_gaji_group
 						FROM production_report pr
-						INNER JOIN part ON part.part_number = pr.part_number
+						INNER JOIN vw_part_period_price part ON part.part_number = pr.part_number AND part.period_id = ?
 						INNER JOIN tblgroups g2 ON g2.id = pr.group_id
 						WHERE pr.reported_date BETWEEN ? AND ?
 						GROUP BY pr.reported_date, pr.group_id
@@ -348,14 +375,14 @@ class ReportController extends Controller
 				) t 
 				group by group_id, group_name, bagian, employee_id";
 		
-		$result = DB::select($sql, [$startDate, $endDate, $startDate, $endDate, $startDate, $endDate]);
+		$result = DB::select($sql, [$periodId, $startDate, $endDate, $startDate, $endDate, $startDate, $endDate]);
 
 		foreach ($result as $key => $value) {
 			$value->gaji_bulat_100 = ($value->salary % 100 > 0) ? ($value->salary - ($value->salary % 100) + 100) : $value->salary;
 		}
 
 		// dd($result);
-
+		$data = array();
 		foreach ($result as $key => $value) {
 			$row["group_id"]			= $value->group_id;
 			$row["bagian"] 				= $value->bagian;
@@ -388,25 +415,31 @@ class ReportController extends Controller
 		$x['endDate'] 	= $endDate;
 		$x['data'] 		= $finalOutput;
 
-		if ($request->input('pdf')) {
-			$pdf = PDF::loadView('export.laporan_rekap_gaji_borongan', $x);
-			return $pdf->download('group-summary-export-'.(date('YmdHis')).'.pdf');			
-		} else if ($request->input('excel')) {
-			return Excel::download(new GeneralViewExport('export.laporan_rekap_gaji_borongan', $x), 'group-summary-export-'.(date('YmdHis')).'.xlsx');
-		} else {
+		// if ($request->input('pdf')) {
+		// 	$pdf = PDF::loadView('export.laporan_rekap_gaji_borongan', $x);
+		// 	return $pdf->download('group-summary-export-'.(date('YmdHis')).'.pdf');			
+		// } else if ($request->input('excel')) {
+		// 	return Excel::download(new GeneralViewExport('export.laporan_rekap_gaji_borongan', $x), 'group-summary-export-'.(date('YmdHis')).'.xlsx');
+		// } else {
 			return view('export.laporan_rekap_gaji_borongan', $x);
-		}
+		// }
 	}
 
 	public function formReceh(Request $request)
 	{
+		$this->data['periods'] = \App\Model\ReportPeriod::all();
 		return view('modules.report.report-receh', $this->data);
 	}
 
 	public function formRecehExport(Request $request)
 	{
-		$startDate 	= $request->input('startDate');
-		$endDate 	= $request->input('endDate');
+		$periodId 	= $request->input('periodId');
+
+		$p = \App\Model\ReportPeriod::find($periodId);
+		$startDate 	= $p->start_period;
+		$endDate 	= $p->end_period;
+		// $startDate 	= $request->input('startDate');
+		// $endDate 	= $request->input('endDate');
 
 		$sql = "SELECT group_id, group_name, bagian, employee_id, sum(t.gaji) as salary 
 				FROM (
@@ -419,7 +452,7 @@ class ReportController extends Controller
 					LEFT JOIN (
 						SELECT pr.reported_date, pr.group_id, SUM(pr.qty_output * part.price) total_gaji_group
 						FROM production_report pr
-						INNER JOIN part ON part.part_number = pr.part_number
+						INNER JOIN vw_part_period_price part ON part.part_number = pr.part_number AND part.period_id = ?
 						INNER JOIN tblgroups g2 ON g2.id = pr.group_id
 						WHERE pr.reported_date BETWEEN ? AND ?
 						GROUP BY pr.reported_date, pr.group_id
@@ -437,7 +470,7 @@ class ReportController extends Controller
 				) t 
 				group by group_id, group_name, bagian, employee_id";
 		
-		$result = DB::select($sql, [$startDate, $endDate, $startDate, $endDate, $startDate, $endDate]);
+		$result = DB::select($sql, [$periodId, $startDate, $endDate, $startDate, $endDate, $startDate, $endDate]);
 
 		foreach ($result as $key => $value) {
 			$value->gaji_bulat_100 = ($value->salary % 100 > 0) ? ($value->salary - ($value->salary % 100) + 100) : $value->salary;
@@ -445,7 +478,7 @@ class ReportController extends Controller
 		}
 
 		// dd($result);
-
+		$data = array();
 		foreach ($result as $key => $value) {
 			$row["group_id"]			= $value->group_id;
 			$row["bagian"] 				= $value->bagian;
@@ -494,14 +527,14 @@ class ReportController extends Controller
 		$x['data'] 		= $finalOutput;
 		// dd($data);
 
-		if ($request->input('pdf')) {
-			$pdf = PDF::loadView('export.laporan_receh', $x)->setPaper('a4', 'landscape');
-			return $pdf->download('receh-export-'.(date('YmdHis')).'.pdf');			
-		} else if ($request->input('excel')) {
-			return Excel::download(new GeneralViewExport('export.laporan_receh', $x), 'receh-export-'.(date('YmdHis')).'.xlsx');
-		} else {
+		// if ($request->input('pdf')) {
+		// 	$pdf = PDF::loadView('export.laporan_receh', $x)->setPaper('a4', 'landscape');
+		// 	return $pdf->download('receh-export-'.(date('YmdHis')).'.pdf');			
+		// } else if ($request->input('excel')) {
+		// 	return Excel::download(new GeneralViewExport('export.laporan_receh', $x), 'receh-export-'.(date('YmdHis')).'.xlsx');
+		// } else {
 			return view('export.laporan_receh', $x);
-		}
+		// }
 
 	}
 
@@ -544,13 +577,19 @@ class ReportController extends Controller
 
 	public function formSalary(Request $request)
 	{
+		$this->data['periods'] = \App\Model\ReportPeriod::all();
 		return view('modules.report.report-salary', $this->data);
 	}
 
 	public function formSalaryExport(Request $request)
 	{
-		$startDate 	= $request->input('startDate');
-		$endDate 	= $request->input('endDate');
+		$periodId 	= $request->input('periodId');
+
+		$p = \App\Model\ReportPeriod::find($periodId);
+		$startDate 	= $p->start_period;
+		$endDate 	= $p->end_period;
+		// $startDate 	= $request->input('startDate');
+		// $endDate 	= $request->input('endDate');
 
 		
 		$sql = "SELECT t.employee_nik, t.employee_name, t.employee_rekening, sum(t.gaji) as salary
@@ -564,8 +603,8 @@ class ReportController extends Controller
 					LEFT JOIN employee e ON mr.employee_id=e.id
 					LEFT JOIN (
 						SELECT pr.reported_date, pr.group_id, SUM(pr.qty_output * part.price) total_gaji_group
-						FROM production_report pr
-						INNER JOIN part ON part.part_number = pr.part_number
+						FROM production_report pr						
+						INNER JOIN vw_part_period_price part ON part.part_number = pr.part_number AND part.period_id = ?
 						INNER JOIN tblgroups g2 ON g2.id = pr.group_id
 						WHERE pr.reported_date BETWEEN ? AND ? 
 						GROUP BY pr.reported_date, pr.group_id
@@ -583,7 +622,7 @@ class ReportController extends Controller
 				) t 
 				GROUP BY employee_nik, employee_name, employee_rekening";
 
-		$data = DB::select($sql, [$startDate, $endDate,$startDate, $endDate,$startDate, $endDate]);
+		$data = DB::select($sql, [$periodId, $startDate, $endDate,$startDate, $endDate,$startDate, $endDate]);
 
 		$export = array();
 		foreach ($data as $key => $value) {
@@ -600,23 +639,23 @@ class ReportController extends Controller
 
 		// dd($export);
 
-		$heading = array_keys(json_decode(json_encode($export[0]), true));
+		// $heading = array_keys(json_decode(json_encode($export[0]), true));
 		// return Excel::download(new GeneralExport($heading, $export), 'salary-export-'.(date('YmdHis')).'.xlsx');
 
 		$x['rows'] 		= json_decode(json_encode($export));
-		$x['headings'] 	= $heading;
+		$x['headings'] 	= array();//$heading;
 		$x['startDate'] = $startDate;
 		$x['endDate'] 	= $endDate;
 
 
-		if ($request->input('pdf')) {
-			$pdf = PDF::loadView('export.laporan_gaji', $x)->setPaper('a4', 'landscape');
-			return $pdf->download('salary-export-'.(date('YmdHis')).'.pdf');			
-		} else if ($request->input('excel')) {
-			return Excel::download(new GeneralViewExport('export.laporan_gaji', $x), 'salary-export-'.(date('YmdHis')).'.xlsx');
-		} else {
+		// if ($request->input('pdf')) {
+		// 	$pdf = PDF::loadView('export.laporan_gaji', $x)->setPaper('a4', 'landscape');
+		// 	return $pdf->download('salary-export-'.(date('YmdHis')).'.pdf');			
+		// } else if ($request->input('excel')) {
+		// 	return Excel::download(new GeneralViewExport('export.laporan_gaji', $x), 'salary-export-'.(date('YmdHis')).'.xlsx');
+		// } else {
 			return view('export.laporan_gaji', $x);	
-		}
+		// }
 	}
 
 
@@ -624,17 +663,27 @@ class ReportController extends Controller
 	public function formTandaTerima(Request $request)
 	{
 		$this->data['groups'] = \App\Model\Group::all();
+		$this->data['periods'] = \App\Model\ReportPeriod::all();
 		return view('modules.report.report-tanda-terima', $this->data);
 	}
 	
 	public function formTandaTerimaExport(Request $request)
 	{
 		$groupId 	= $request->input('groupId');
-		$startDate 	= $request->input('startDate');
-		$endDate 	= $request->input('endDate');
+		$periodId 	= $request->input('periodId');
+
+		$p = \App\Model\ReportPeriod::find($periodId);
+		$startDate 	= $p->start_period;
+		$endDate 	= $p->end_period;
+		// $startDate 	= $request->input('startDate');
+		// $endDate 	= $request->input('endDate');
 
 		$totalPrice = DB::table('production_report')
-			->join('part', 'part.part_number', '=', 'production_report.part_number')
+			// ->join('part', 'part.part_number', '=', 'production_report.part_number')
+			->join('vw_part_period_price as part', function($join) use ($periodId) {
+                    $join->on('part.part_number', '=', 'production_report.part_number');
+                    $join->where('part.period_id', '=', $periodId);					
+				})
 			->where('production_report.group_id', $groupId)
 			->whereBetween('production_report.reported_date', [$startDate, $endDate])
 			->sum(DB::raw('production_report.qty_output * part.price'));
@@ -681,7 +730,11 @@ class ReportController extends Controller
 				$row['dateList'][$v2]['jam'] 	= 0;
 				$row['dateList'][$v2]['gaji'] 	= 0;
 				$row['dateList'][$v2]['totalGaji'] 	= DB::table('production_report')
-					->join('part', 'part.part_number', '=', 'production_report.part_number')
+					// ->join('part', 'part.part_number', '=', 'production_report.part_number')					
+					->join('vw_part_period_price as part', function($join) use ($periodId) {
+		                    $join->on('part.part_number', '=', 'production_report.part_number');
+		                    $join->where('part.period_id', '=', $periodId);					
+						})
 					->where('production_report.group_id', $groupId)
 					->where('production_report.reported_date', $v2)
 					->sum(DB::raw('production_report.qty_output * part.price'));
@@ -725,15 +778,15 @@ class ReportController extends Controller
 		$x['data']		= $export;
 
 
-		if ($request->input('pdf')) {
-			$pdf = PDF::loadView('export.laporan_tanda_terima_upah', $x)->setPaper('a4');
-			return $pdf->download('tanda-terima-upah-'.(date('YmdHis')).'.pdf');
+		// if ($request->input('pdf')) {
+		// 	$pdf = PDF::loadView('export.laporan_tanda_terima_upah', $x)->setPaper('a4');
+		// 	return $pdf->download('tanda-terima-upah-'.(date('YmdHis')).'.pdf');
 
-		} else if ($request->input('excel')) {
-			return Excel::download(new GeneralViewExport('export.laporan_tanda_terima_upah', $x), 'tanda-terima-upah-'.(date('YmdHis')).'.xlsx');
-		} else {
+		// } else if ($request->input('excel')) {
+		// 	return Excel::download(new GeneralViewExport('export.laporan_tanda_terima_upah', $x), 'tanda-terima-upah-'.(date('YmdHis')).'.xlsx');
+		// } else {
 			return view('export.laporan_tanda_terima_upah', $x);
-		}
+		// }
 
 	}
 }

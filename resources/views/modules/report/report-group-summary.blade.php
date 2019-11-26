@@ -33,7 +33,7 @@
                     <div class="box">
                         <div class="box-body">
                             @csrf
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label>Period</label>
                                 <div class="row">
                                     <div class="col-sm-6">
@@ -45,6 +45,14 @@
                                         <p class="help-block text-right">End Date</p>
                                     </div>
                                 </div>
+                            </div> -->
+                            <div class="form-group">
+                                <label>Period</label>
+                                <select id="periodId" name="periodId" class="form-control select-item" style="width: 100%">
+                                    @foreach($periods as $p)
+                                        <option value="{{ $p->id }}">{{ date('d M Y', strtotime($p->start_period)) . '  -  ' . date('d M Y', strtotime($p->end_period)) }}</option>
+                                    @endforeach    
+                                </select>
                             </div>
                         </div>
                         <div class="box-footer text-center">
