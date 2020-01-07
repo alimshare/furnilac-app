@@ -48,16 +48,15 @@ class POController extends Controller
 	*/
 	public function save(Request $request)
 	{
-		// dd($request->all());
 		
 		$obj = new PO;
 		$obj->po_number 		= $request->input('poNumber');
 		$obj->pic_id 			= $request->input('picId');
 		$obj->buyer_id 			= $request->input('buyerId');
-		$obj->transaction_date 	= $request->input('transactionDate');
-		$obj->sw_begin 			= $request->input('startDate');
-		$obj->sw_end 			= $request->input('endDate');
-		$obj->notice_date		= $request->input('noticeDate');
+		$obj->transaction_date 	= date("Y-m-d", strtotime($request->input('transactionDate')));
+		$obj->sw_begin 			= date("Y-m-d", strtotime($request->input('startDate')));
+		$obj->sw_end 			= date("Y-m-d", strtotime($request->input('endDate')));
+		$obj->notice_date		= date("Y-m-d", strtotime($request->input('noticeDate')));
 		$obj->status			= 'WAIT';
 
 
@@ -76,7 +75,7 @@ class POController extends Controller
 			$poPrice['item_code'] 		= $itemCode;
 			$poPrice['selling_price'] 	= $itemPrice;
 			$poPrice['qty'] 			= $qtyList[$i];
-			$poPrice['created_at'] 	= date('Y-m-d H:i:s');
+			$poPrice['created_at'] 		= date('Y-m-d H:i:s');
 			$poPrices[] = $poPrice;
 
 			$partList = Part::where('item_code', $itemCode)->select('part_number','price','qty')->get();
