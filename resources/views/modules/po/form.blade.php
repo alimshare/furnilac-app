@@ -2,6 +2,7 @@
 
 @section('header-script')
 <link rel="stylesheet" href="/bower_components/select2/dist/css/select2.min.css">
+<link rel="stylesheet" href="/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
 <style type="text/css">
 .select2-container--default .select2-selection--single {
     background-color: #fff;
@@ -29,7 +30,7 @@
     <section class="content container-fluid">      
         <div class="row">
             <div class="col-xs-12 col-lg-12">
-                <form class="form-horizontal" action="/po/new" method="POST">
+                <form id="form" class="form-horizontal" action="/po/new" method="POST" onsubmit="return validateForm()">
                     <div class="box">
                         <div class="box-body">
                             <div class="row">
@@ -40,19 +41,20 @@
                                             @csrf
                                             <div class="form-group">
                                                 <label for="poNumber" class="col-sm-4 control-label">PO Number <span class="text-red">*</span></label>
-                                                <div class="col-sm-8"><input type="text" class="form-control" id="poNumber" placeholder="PO Number" name="poNumber" required=""></div>
+                                                <div class="col-sm-8"><input type="text" class="form-control" id="poNumber" placeholder="PO Number" name="poNumber" ></div>
                                             </div>
                                             <div class="form-group">
                                                 <label for="transactionDate" class="col-sm-4 control-label">Transaction Date <span class="text-red">*</span></label>
                                                 <div class="col-sm-8">
-                                                    <input type="date" class="form-control" id="transactionDate" placeholder="Transaction Date" name="transactionDate" required="">
-                                                    <small class="">Format : mm/dd/yyyy</small>
+                                                    <input type="text" class="form-control datepicker" id="transactionDate" placeholder="Transaction Date" name="transactionDate" autocomplete="off">
+                                                    <small class="">Format : dd/mm/yyyy</small>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label for="pic" class="col-sm-4 control-label">Buyer <span class="text-red">*</span></label>
                                                 <div class="col-sm-8">
                                                     <select id="buyerId" name="buyerId" class="form-control select-item" style="width: 100%">
+                                                        <option value="">--Choose--</option>
                                                         @foreach($buyers as $e)
                                                             <option value="{{ $e->id }}">{{ $e->name }}</option>
                                                         @endforeach    
@@ -64,10 +66,10 @@
                                                 <div class="col-sm-8">
                                                     <div class="row">
                                                         <div class="col-xs-6">
-                                                            <input type="date" class="form-control" id="startDate" placeholder="Start Date" name="startDate">                                           
+                                                            <input type="text" class="form-control datepicker" id="startDate" placeholder="Start Date" name="startDate" autocomplete="off">                                           
                                                         </div>
                                                         <div class="col-xs-6">
-                                                            <input type="date" class="form-control" id="endDate" placeholder="End Date" name="endDate">                                        
+                                                            <input type="text" class="form-control datepicker" id="endDate" placeholder="End Date" name="endDate" autocomplete="off">                                        
                                                         </div>
                                                     </div>
                                                 </div>
@@ -75,14 +77,15 @@
                                             <div class="form-group">
                                                 <label for="transactionDate" class="col-sm-4 control-label">Notice Date <span class="text-red">*</span></label>
                                                 <div class="col-sm-8">
-                                                    <input type="date" class="form-control" id="noticeDate" placeholder="Notice Date" name="noticeDate" required="">
-                                                    <small class="">Format : mm/dd/yyyy</small>
+                                                    <input type="text" class="form-control datepicker" id="noticeDate" placeholder="Notice Date" name="noticeDate" autocomplete="off">
+                                                    <small class="">Format : dd/mm/yyyy</small>
                                                 </div>
                                             </div>  
                                             <div class="form-group">
                                                 <label for="pic" class="col-sm-4 control-label">PIC <span class="text-red">*</span></label>
                                                 <div class="col-sm-8">
-                                                    <select id="employeeId" name="picId" class="form-control select-item" style="width: 100%">
+                                                    <select id="employeeId" name="picId" class="form-control select-item" style="width: 100%">                     
+                                                        <option value="">--Choose--</option>
                                                         @foreach($employees as $e)
                                                             <option value="{{ $e->id }}">{{ $e->nik . ' - ' . $e->name }}</option>
                                                         @endforeach    
@@ -131,7 +134,7 @@
                                                             <input type="number" class="form-control" id="unit_price" name="price[]">
                                                         </td>
                                                         <td>
-                                                            <input type="number" min="1" name="qty[]" class="form-control" value="1">
+                                                            <input type="number" min="1" name="qty[]" id="qty" class="form-control" value="1">
                                                         </td>
                                                         <td class="text-center">
                                                             <a href="javascript:void(0)" class="del-item"><i class="fa fa-times text-red"></i></a>
@@ -165,6 +168,7 @@
 
 @section('footer-script')
 <script src="/bower_components/select2/dist/js/select2.full.min.js"></script>
+<script type="text/javascript" src="/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
 <script type="text/javascript">
     $(function(){
         var clone_item = $('#tbl_item tbody tr:first').clone();
@@ -198,5 +202,38 @@
             eParent.find('.description').val(res.item_name);
         });
     }
+
+    function validateForm(){
+        alert('hello');
+        let form = document.forms["form"];
+
+        if (form["poNumber"].value == "")       { alert("PO Number tidak boleh kosong"); return false; }
+        if (form["buyerId"].value == "")        { alert("Buyer tidak boleh kosong"); return false; }
+        if (form["startDate"].value == "")      { alert("SW Start Date tidak boleh kosong"); return false; }
+        if (form["endDate"].value == "")        { alert("SW End Date tidak boleh kosong"); return false; }
+        if (form["noticeDate"].value == "")     { alert("Notice Date tidak boleh kosong"); return false; }
+        if (form["picId"].value == "")          { alert("PIC tidak boleh kosong"); return false; }
+        if (form["transactionDate"].value == ""){ alert("Transaction Date tidak boleh kosong"); return false; }
+        let units = form.unit_price;
+        for (let i = 0; i < units.length; i++)  {
+            if (units[i].value == "") {
+                alert("Unit Price tidak boleh kosong"); return false;
+            }
+        }
+
+        let qtys = form.qty;
+        for (let i = 0; i < qtys.length; i++)  {
+            if (qtys[i].value == "") {
+                alert("Qty Item tidak boleh kosong"); return false;
+            }
+        }
+
+        return true;
+    }
+
+    $(".datepicker").datepicker({
+        format: 'dd/mm/yyyy'
+    });
+
 </script>
 @endsection
